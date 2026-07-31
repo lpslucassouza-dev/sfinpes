@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+}
+
+enum StatusParcela {
+  INICIO
+  CORRENTE
+  FIM
+  UNICA
+}
+
+model Usuario {
+  id        Int      @id @default(autoincrement())
+  nome      String   @unique
+  ativo     Boolean  @default(true)
+
+  compras   Compra[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Cartao {
+  id                Int      @id @default(autoincrement())
+  nome              String   @unique
+  cashbackPercent   Decimal  @db.Decimal(5,2)
+  ativo             Boolean  @default(true)
+
+  compras           Compra[]
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Categoria {
+  id              Int      @id @default(autoincrement())
+  nome            String   @unique
+  ativo           Boolean  @default(true)
+
+  subCategorias   SubCategoria[]
+  compras         Compra[]
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model SubCategoria {
+  id            Int      @id @default(autoincrement())
+
+  categoriaId   Int
+  nome          String
+  ativo         Boolean  @default(true)
+
+  categoria     Categoria @relation(fields: [categoriaId], references: [id])
+
+  compras       Compra[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([categoriaId, nome])
+}
+
+model Compra {
+  id                Int       @id @default(autoincrement())
+
+  dataCompra        DateTime
+
+  competenciaMes    Int
+  competenciaAno    Int
+
+  descricao         String
+
+  valorTotal        Decimal   @db.Decimal(12,2)
+
+  totalParcelas     Int
+
+  cartaoId          Int
+  usuarioId         Int
+  categoriaId       Int
+  subCategoriaId    Int?
+
+  cartao            Cartao @relation(fields: [cartaoId], references: [id])
+  usuario           Usuario @relation(fields: [usuarioId], references: [id])
+  categoria         Categoria @relation(fields: [categoriaId], references: [id])
+  subCategoria      SubCategoria? @relation(fields: [subCategoriaId], references: [id])
+
+  parcelas          Parcela[]
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([competenciaMes, competenciaAno])
+  @@index([cartaoId])
+  @@index([usuarioId])
+}
+
+model Parcela {
+  id                Int      @id @default(autoincrement())
+
+  compraId          Int
+
+  numeroParcela     Int
+  totalParcelas     Int
+
+  competenciaMes    Int
+  competenciaAno    Int
+
+  valorParcela      Decimal  @db.Decimal(12,2)
+
+  cashback          Decimal  @db.Decimal(12,2)
+
+  statusParcela     StatusParcela
+
+  compra            Compra @relation(fields: [compraId], references: [id], onDelete: Cascade)
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([compraId])
+
+  @@index([competenciaAno, competenciaMes])
+
+  @@index([statusParcela])
+}
