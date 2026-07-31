@@ -17,10 +17,10 @@ enum StatusParcela {
 model Usuario {
   id        Int      @id @default(autoincrement())
   nome      String   @unique
+  email     String?  @unique
+  senha     String?
   ativo     Boolean  @default(true)
-
   compras   Compra[]
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -127,4 +127,12 @@ model Parcela {
   @@index([competenciaAno, competenciaMes])
 
   @@index([statusParcela])
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
 }
