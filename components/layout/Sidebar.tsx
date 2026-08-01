@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Calendar, FolderTree, CreditCard, } from "lucide-react";
+import { Home, Calendar, FolderTree, CreditCard, Users, User } from "lucide-react";
 import LogoutButton from "./LogoutButton";
 import UserInfo from "./UserInfo";
 
@@ -26,6 +26,16 @@ const links = [
     href: "/cartoes",
     label: "Cartões",
     icon: CreditCard,
+  },
+  {
+    href: "/usuarios",
+    label: "Usuários",
+    icon: Users,
+  },
+  {
+    href: "/perfil",
+    label: "Perfil",
+    icon: User,
   },
 ];
 
