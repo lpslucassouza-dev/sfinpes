@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Calendar, FolderTree, CreditCard, } from "lucide-react";
+import LogoutButton from "./LogoutButton";
+import UserInfo from "./UserInfo";
 
 const links = [
   {
@@ -52,6 +54,9 @@ export default function Sidebar() {
         <p className="text-slate-400 text-sm">
           Financeiro
         </p>
+
+        <UserInfo />
+        
       </div>
 
       <nav className="p-3 flex flex-col gap-2">
@@ -83,6 +88,11 @@ export default function Sidebar() {
           <br />
           Versão 1.0
         </div>
+
+        <div className="absolute bottom-6 left-4 right-4">
+          <LogoutButton />
+        </div>
+
     </aside>
     
   );

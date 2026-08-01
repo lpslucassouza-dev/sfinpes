@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import Sidebar from "@/components/layout/Sidebar";
+import AuthProvider from "@/components/providers/AuthProvider";
 
 
 const geistSans = Geist({
@@ -30,18 +31,21 @@ export default function RootLayout({
       lang="pt-BR">
       <body className="bg-slate-100">
 
-        <Sidebar />
+        <AuthProvider>
 
-        <div className="ml-56">
-          {children}
-        </div>
+          <Sidebar />
 
-        <Toaster
-          position="top-right"
-          richColors
-          closeButton
-        />
+          <div className="ml-56">
+            {children}
+          </div>
 
+          <Toaster
+            position="top-right"
+            richColors
+            closeButton
+          />
+        </AuthProvider>
+        
       </body>
     </html>
   );
