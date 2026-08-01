@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { formatCurrency } from "@/lib/format";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
 const meses = [
   "Janeiro",
@@ -18,6 +20,12 @@ const meses = [
 
 export default async function ProjecaoPage() {
 
+  const session = await auth();
+  
+    if (!session) {
+      redirect("/login");
+    }
+  
   const parcelas = await prisma.parcela.findMany({
     orderBy: [
       {

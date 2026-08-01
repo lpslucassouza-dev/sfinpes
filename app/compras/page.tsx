@@ -8,6 +8,8 @@ import GastosPorCategoria from "@/components/compras/GastosPorCategoria";
 import ModalParcelas from "@/components/compras/ModalParcelas";
 import ModalExcluirCompra from "@/components/compras/ModalExcluirCompra";
 import ModalEditarCompra from "@/components/compras/ModalEditarCompra";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
 type Props = {
   searchParams: Promise<{
@@ -21,6 +23,12 @@ type Props = {
 export default async function ComprasPage({
   searchParams,
 }: Props) {
+
+  const session = await auth();
+
+  if (!session) {
+    redirect("/login");
+  }
 
   const params = await searchParams;
 

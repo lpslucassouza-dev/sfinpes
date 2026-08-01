@@ -2,8 +2,16 @@ import { prisma } from "@/lib/prisma";
 import ModalCartao from "@/components/cartoes/ModalCartao";
 import ModalEditarCartao from "@/components/cartoes/ModalEditarCartao";
 import BotaoStatusCartao from "@/components/cartoes/BotaoStatusCartao";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
 export default async function CartoesPage() {
+
+  const session = await auth();
+
+  if (!session) {
+    redirect("/login");
+  }
 
   const cartoes =
     await prisma.cartao.findMany({

@@ -5,8 +5,17 @@ import BotaoExcluirCategoria from "@/components/categorias/BotaoExcluirCategoria
 import BotaoExcluirSubCategoria from "@/components/categorias/BotaoExcluirSubCategoria";
 import ModalEditarCategoria from "@/components/categorias/ModalEditarCategoria";
 import ModalEditarSubCategoria from "@/components/categorias/ModalEditarSubCategoria";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+
 
 export default async function CategoriasPage() {
+
+  const session = await auth();
+
+  if (!session) {
+    redirect("/login");
+  }
 
   const categorias =
     await prisma.categoria.findMany({
