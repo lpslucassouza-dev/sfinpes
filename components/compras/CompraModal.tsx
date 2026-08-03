@@ -148,7 +148,7 @@ usuarios,
             hover:bg-blue-700
           "
         >
-          + Nova Compra
+          + Novo Lançamento
         </button>
       </Dialog.Trigger>
 

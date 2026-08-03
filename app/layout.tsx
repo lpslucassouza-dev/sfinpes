@@ -35,7 +35,7 @@ export default function RootLayout({
 
           <Sidebar />
 
-          <div className="ml-56">
+          <div className="ml-52">
             {children}
           </div>
 

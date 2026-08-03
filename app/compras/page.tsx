@@ -268,12 +268,12 @@ const encerrando = compras
         <div className="flex items-center justify-between mb-8">
 
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">
-              Compras
+            <h1 className="text-3xl font-bold">
+              Dashboard Financeiro
             </h1>
 
-            <p className="text-slate-600 mt-1">
-              Gerencie seus lançamentos
+            <p className="text-slate-600">
+              Visão geral dos lançamentos e compromissos futuros
             </p>
           </div>
 
