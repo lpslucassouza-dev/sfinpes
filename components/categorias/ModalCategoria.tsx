@@ -8,6 +8,8 @@ import { toast } from "sonner";
 
 export default function ModalCategoria() {
 
+  const [tipo, setTipo] = useState("AMBOS");
+
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
@@ -20,7 +22,10 @@ export default function ModalCategoria() {
       return;
     }
 
-    await criarCategoria(nome);
+    await criarCategoria(
+      nome,
+      tipo
+    );
 
     toast.success(
       "Categoria criada com sucesso."
@@ -108,6 +113,25 @@ export default function ModalCategoria() {
                 p-2
               "
             />
+
+            <select
+              value={tipo}
+              onChange={(e) =>
+                setTipo(e.target.value)
+              }
+            >
+              <option value="CARTAO">
+                Cartão de Crédito
+              </option>
+
+              <option value="CONTA_CORRENTE">
+                Conta Corrente
+              </option>
+
+              <option value="AMBOS">
+                Ambos
+              </option>
+            </select>
 
             <button
               onClick={handleSalvar}

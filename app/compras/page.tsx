@@ -83,7 +83,14 @@ export default async function ComprasPage({
 
   const categorias = await prisma.categoria.findMany({
     where: {
-      ativo: true,
+            OR: [
+            {
+            tipo: "CARTAO",
+            },
+            {
+            tipo: "AMBOS",
+            },
+    ],
     },
     include: {
       subCategorias: {

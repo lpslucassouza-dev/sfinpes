@@ -4,11 +4,13 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 export async function criarCategoria(
-  nome: string
+  nome: string,
+  tipo: string
 ) {
   await prisma.categoria.create({
     data: {
       nome,
+      tipo: tipo as any,
     },
   });
 
@@ -96,7 +98,8 @@ export async function excluirSubCategoria(
 
 export async function atualizarCategoria(
   id: number,
-  nome: string
+  nome: string,
+  tipo: string
 ) {
   await prisma.categoria.update({
     where: {
@@ -105,6 +108,7 @@ export async function atualizarCategoria(
 
     data: {
       nome,
+      tipo: tipo as any,
     },
   });
 

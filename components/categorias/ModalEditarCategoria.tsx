@@ -8,24 +8,27 @@ import { atualizarCategoria } from "@/app/categorias/actions";
 type Props = {
   id: number;
   nome: string;
+  tipo: string;
 };
 
 export default function ModalEditarCategoria({
   id,
   nome,
+  tipo,
 }: Props) {
   const router = useRouter();
 
-  const [open, setOpen] =
-    useState(false);
+  const [open, setOpen] = useState(false);
 
-  const [nomeAtual, setNomeAtual] =
-    useState(nome);
+  const [nomeAtual, setNomeAtual] = useState(nome);
+
+  const [tipoAtual, setTipoAtual] = useState(tipo);
 
   async function handleSalvar() {
     await atualizarCategoria(
       id,
-      nomeAtual
+      nomeAtual,
+      tipoAtual
     );
 
     setOpen(false);
@@ -100,6 +103,34 @@ export default function ModalEditarCategoria({
               mb-4
             "
           />
+
+          <select
+            value={tipoAtual}
+            onChange={(e) =>
+              setTipoAtual(
+                e.target.value
+              )
+            }
+            className="
+              w-full
+              border
+              rounded-lg
+              p-2
+              mb-4
+            "
+          >
+            <option value="CARTAO">
+              Cartão de Crédito
+            </option>
+
+            <option value="CONTA_CORRENTE">
+              Conta Corrente
+            </option>
+
+            <option value="AMBOS">
+              Ambos
+            </option>
+          </select>
 
           <button
             onClick={handleSalvar}

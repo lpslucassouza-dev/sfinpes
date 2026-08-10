@@ -14,6 +14,12 @@ enum StatusParcela {
   UNICA
 }
 
+enum CategoriaTipo {
+  CARTAO
+  CONTA_CORRENTE
+  AMBOS
+}
+
 model Usuario {
   id        Int      @id @default(autoincrement())
   nome      String   @unique
@@ -44,6 +50,8 @@ model Categoria {
 
   subCategorias   SubCategoria[]
   compras         Compra[]
+
+  tipo            CategoriaTipo @default(AMBOS)
 
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt

@@ -74,6 +74,16 @@ export default async function CategoriasPage() {
                   {categoria.nome}
                 </h2>
 
+                <p
+                  className="
+                    text-sm
+                    text-slate-500
+                    mb-2
+                  "
+                >
+                  {categoria.tipo}
+                </p>
+
                 <div className="flex gap-2">
 
                   <ModalSubCategoria
@@ -84,6 +94,7 @@ export default async function CategoriasPage() {
                   <ModalEditarCategoria
                     id={categoria.id}
                     nome={categoria.nome}
+                    tipo={categoria.tipo}
                   />
 
                   <BotaoExcluirCategoria
