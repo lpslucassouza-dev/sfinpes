@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum StatusParcela {
@@ -20,6 +20,12 @@ enum CategoriaTipo {
   AMBOS
 }
 
+enum ModalidadeContaCorrente {
+  RECEITA
+  DESPESA
+  INVESTIMENTO
+}
+
 model Usuario {
   id        Int      @id @default(autoincrement())
   nome      String   @unique
@@ -32,76 +38,80 @@ model Usuario {
 }
 
 model Cartao {
-  id                Int      @id @default(autoincrement())
-  nome              String   @unique
-  cashbackPercent   Decimal  @db.Decimal(5,2)
-  ativo             Boolean  @default(true)
+  id              Int     @id @default(autoincrement())
+  nome            String  @unique
+  cashbackPercent Decimal @db.Decimal(5, 2)
+  ativo           Boolean @default(true)
 
-  compras           Compra[]
+  compras Compra[]
 
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Categoria {
-  id              Int      @id @default(autoincrement())
-  nome            String   @unique
-  ativo           Boolean  @default(true)
+  id    Int     @id @default(autoincrement())
+  nome  String  @unique
+  ativo Boolean @default(true)
 
-  subCategorias   SubCategoria[]
-  compras         Compra[]
+  subCategorias SubCategoria[]
+  compras       Compra[]
 
-  tipo            CategoriaTipo @default(AMBOS)
+  lancamentosContaCorrente LancamentoContaCorrente[]
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  tipo CategoriaTipo @default(AMBOS)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model SubCategoria {
-  id            Int      @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-  categoriaId   Int
-  nome          String
-  ativo         Boolean  @default(true)
+  categoriaId Int
+  nome        String
+  ativo       Boolean @default(true)
 
-  categoria     Categoria @relation(fields: [categoriaId], references: [id])
+  categoria Categoria @relation(fields: [categoriaId], references: [id])
 
-  compras       Compra[]
+  compras Compra[]
 
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  lancamentosContaCorrente LancamentoContaCorrente[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([categoriaId, nome])
 }
 
 model Compra {
-  id                Int       @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-  dataCompra        DateTime
+  dataCompra DateTime
 
-  competenciaMes    Int
-  competenciaAno    Int
+  competenciaMes Int
+  competenciaAno Int
 
-  descricao         String
+  descricao String
 
-  valorTotal        Decimal   @db.Decimal(12,2)
+  valorTotal Decimal @db.Decimal(12, 2)
 
-  totalParcelas     Int
+  totalParcelas Int
 
-  cartaoId          Int
-  usuarioId         Int
-  categoriaId       Int
-  subCategoriaId    Int?
+  cartaoId       Int
+  usuarioId      Int
+  categoriaId    Int
+  subCategoriaId Int?
 
-  cartao            Cartao @relation(fields: [cartaoId], references: [id])
-  usuario           Usuario @relation(fields: [usuarioId], references: [id])
-  categoria         Categoria @relation(fields: [categoriaId], references: [id])
-  subCategoria      SubCategoria? @relation(fields: [subCategoriaId], references: [id])
+  cartao       Cartao        @relation(fields: [cartaoId], references: [id])
+  usuario      Usuario       @relation(fields: [usuarioId], references: [id])
+  categoria    Categoria     @relation(fields: [categoriaId], references: [id])
+  subCategoria SubCategoria? @relation(fields: [subCategoriaId], references: [id])
 
-  parcelas          Parcela[]
+  parcelas Parcela[]
 
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([competenciaMes, competenciaAno])
   @@index([cartaoId])
@@ -109,31 +119,29 @@ model Compra {
 }
 
 model Parcela {
-  id                Int      @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-  compraId          Int
+  compraId Int
 
-  numeroParcela     Int
-  totalParcelas     Int
+  numeroParcela Int
+  totalParcelas Int
 
-  competenciaMes    Int
-  competenciaAno    Int
+  competenciaMes Int
+  competenciaAno Int
 
-  valorParcela      Decimal  @db.Decimal(12,2)
+  valorParcela Decimal @db.Decimal(12, 2)
 
-  cashback          Decimal  @db.Decimal(12,2)
+  cashback Decimal @db.Decimal(12, 2)
 
-  statusParcela     StatusParcela
+  statusParcela StatusParcela
 
-  compra            Compra @relation(fields: [compraId], references: [id], onDelete: Cascade)
+  compra Compra @relation(fields: [compraId], references: [id], onDelete: Cascade)
 
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([compraId])
-
   @@index([competenciaAno, competenciaMes])
-
   @@index([statusParcela])
 }
 
@@ -143,4 +151,30 @@ model User {
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
+}
+
+model LancamentoContaCorrente {
+  id Int @id @default(autoincrement())
+
+  data DateTime
+
+  modalidade ModalidadeContaCorrente
+
+  categoriaId Int
+
+  subCategoriaId Int?
+
+  descricao String
+
+  valorPlanejado Decimal @db.Decimal(10, 2)
+
+  valorRealizado Decimal @db.Decimal(10, 2)
+
+  categoria Categoria @relation(fields: [categoriaId], references: [id])
+
+  subCategoria SubCategoria? @relation(fields: [subCategoriaId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
 }

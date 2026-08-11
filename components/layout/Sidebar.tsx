@@ -7,6 +7,7 @@ import LogoutButton from "./LogoutButton";
 import UserInfo from "./UserInfo";
 import { useState } from "react";
 import { useEffect } from "react";
+import { Landmark } from "lucide-react";
 
 const links = [
   {
@@ -18,6 +19,11 @@ const links = [
     href: "/projecao",
     label: "Projeção",
     icon: Calendar,
+  },
+  {
+    href: "/conta-corrente",
+    label: "Conta Corrente",
+    icon: Landmark,
   },
 ];
 
