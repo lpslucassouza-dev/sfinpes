@@ -14,6 +14,21 @@ export default async function FiltrosContaCorrente({
 
   const router = useRouter();
 
+  const meses = [
+    "Janeiro",
+    "Fevereiro",
+    "Março",
+    "Abril",
+    "Maio",
+    "Junho",
+    "Julho",
+    "Agosto",
+    "Setembro",
+    "Outubro",
+    "Novembro",
+    "Dezembro",
+  ];
+
   function atualizar(
     novoMes: number,
     novoAno: number
@@ -48,7 +63,7 @@ export default async function FiltrosContaCorrente({
               key={i + 1}
               value={i + 1}
             >
-              {String(i + 1).padStart(2, "0")}
+              {meses[i]}
             </option>
           )
         )}

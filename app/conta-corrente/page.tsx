@@ -4,8 +4,9 @@ import { prisma } from "@/lib/prisma";
 import ModalLancamento from "@/components/conta-corrente/ModalLancamento";
 import ModalEditarLancamento from "@/components/conta-corrente/ModalEditarLancamento";
 import BotaoExcluirLancamento from "@/components/conta-corrente/BotaoExcluirLancamento";
-import FiltrosContaCorrente
-  from "@/components/conta-corrente/FiltrosContaCorrente";
+import FiltrosContaCorrente from "@/components/conta-corrente/FiltrosContaCorrente";
+import GraficoCategorias from "@/components/conta-corrente/GraficoCategorias";
+import GraficoResumoFinanceiro from "@/components/conta-corrente/GraficoResumoFinanceiro";
 
 export default async function ContaCorrentePage({
   searchParams,
@@ -87,51 +88,7 @@ export default async function ContaCorrentePage({
       orderBy: {
         data: "asc",
       },
-    });
-
-    const saldoPlanejado =
-      lancamentos.reduce(
-        (acc, item) => {
-
-          const valor =
-            Number(
-              item.valorPlanejado
-            );
-
-          if (
-            item.modalidade ===
-            "RECEITA"
-          ) {
-            return acc + valor;
-          }
-
-          return acc - valor;
-
-        },
-        0
-      );
-
-    const saldoAtual =
-      lancamentos.reduce(
-        (acc, item) => {
-
-          const valor =
-            Number(
-              item.valorRealizado
-            );
-
-          if (
-            item.modalidade ===
-            "RECEITA"
-          ) {
-            return acc + valor;
-          }
-
-          return acc - valor;
-
-        },
-        0
-      );
+    });   
 
   const receitas = lancamentos.filter(
     (lancamento) =>
@@ -148,6 +105,28 @@ export default async function ContaCorrentePage({
       lancamento.modalidade === "INVESTIMENTO"
   );
 
+  const receitasPlanejadas =
+    receitas.reduce(
+      (acc, item) =>
+        acc +
+        Number(
+          item.valorPlanejado
+        ),
+      0
+    );
+
+  const despesasPlanejadas =
+    despesas.reduce(
+      (acc, item) =>
+        acc +
+        Number(
+          item.valorPlanejado
+        ),
+      0
+    );
+
+  
+
   const totalReceitas =
       receitas.reduce(
         (acc, item) =>
@@ -158,24 +137,145 @@ export default async function ContaCorrentePage({
         0
       );
   
-  const totalSaidas =
+  const totalDespesas =
+    despesas.reduce(
+      (acc, item) =>
+        acc +
+        Number(item.valorRealizado),
+      0
+    ); 
+
+  const totalInvestimentos =
+    investimentos.reduce(
+      (acc, item) =>
+        acc +
+        Number(item.valorRealizado),
+      0
+    );  
+  
+  const investimentosPlanejados =
+    investimentos.reduce(
+      (acc, item) =>
+        acc +
+        Number(
+          item.valorPlanejado
+        ),
+      0
+    );
+
+    const totalPlanejado =
+    receitasPlanejadas -
+    despesasPlanejadas -
+    investimentosPlanejados;
+  
+    const saldoPlanejado =
+    receitasPlanejadas -
+    despesasPlanejadas -
+    investimentosPlanejados;
+
+  const saldoAtual =
+    totalReceitas -
+    totalDespesas -
+    totalInvestimentos;
+
+  const desvio =
+    saldoAtual -
+    saldoPlanejado;  
+
+  const resultadoMes =
+    totalReceitas -
+    totalDespesas -
+    totalInvestimentos; 
+
+  const totalRealizado =
+    totalReceitas -
+    totalDespesas -
+    totalInvestimentos;
+
+  const resumoCategorias =
+    lancamentos.reduce(
+      (acc, lancamento) => {
+
+        const categoria =
+          lancamento.categoria.nome;
+
+        const valor =
+          Number(
+            lancamento.valorRealizado
+          );
+
+        if (!acc[categoria]) {
+          acc[categoria] = 0;
+        }
+
+        acc[categoria] += valor;
+
+        return acc;
+
+      },
+      {} as Record<string, number>
+    );
+
+  const categoriasOrdenadas =
+    Object.entries(
+      resumoCategorias
+    ).sort(
+      (a, b) =>
+        b[1] - a[1]
+    );
+
+  const top5Categorias =
+    categoriasOrdenadas.slice(0, 5);
+  ``
+
+  const dadosGraficoCategorias =
+    categoriasOrdenadas.map(
+      ([nome, valor]) => ({
+        nome,
+        valor,
+      })
+    );
+
+  const resumoReceitas =
+    receitas.reduce(
+      (acc, item) => {
+
+        const categoria =
+          item.categoria.nome;
+
+        if (!acc[categoria]) {
+          acc[categoria] = 0;
+        }
+
+        acc[categoria] +=
+          Number(item.valorRealizado);
+
+        return acc;
+
+      },
+      {} as Record<string, number>
+    );
+
+  const resumoSaidas =
     [...despesas, ...investimentos]
       .reduce(
-        (acc, item) =>
-          acc +
-          Number(item.valorRealizado),
-        0
-      );  
-  
-  const percentualEconomia =
-    totalReceitas > 0
-      ? (
-          ((totalReceitas - totalSaidas) /
-            totalReceitas) *
-          100
-        )
-      : 0;
+        (acc, item) => {
 
+          const categoria =
+            item.categoria.nome;
+
+          if (!acc[categoria]) {
+            acc[categoria] = 0;
+          }
+
+          acc[categoria] +=
+            Number(item.valorRealizado);
+
+          return acc;
+
+        },
+        {} as Record<string, number>
+      );
 
   return (
     <main className="p-8">
@@ -227,55 +327,75 @@ export default async function ContaCorrentePage({
             mb-8
           "
         >
-        
-        <div
-            className="
-              bg-green-600
-              text-white
-              rounded-xl
-              p-4
-            "
-          >
-            <div>
-              Receitas
+          <div
+              className="
+                bg-green-600
+                text-white
+                rounded-xl
+                p-4
+                shadow-lg
+              "
+            >
+              <div>
+                Receitas
+              </div>
+
+            <div
+              className="
+                text-3xl
+                font-bold
+                mt-2
+              "
+            >
+              {totalReceitas.toLocaleString(
+                "pt-BR",
+                {
+                  style: "currency",
+                  currency: "BRL",
+                }
+              )} 
             </div>
+          </div>
 
           <div
             className="
-              text-3xl
-              font-bold
-              mt-2
-            "
-          >
-            {totalReceitas.toLocaleString(
-              "pt-BR",
-              {
-                style: "currency",
-                currency: "BRL",
-              }
-            )} 
-          </div>
-        </div>
-
-          <div
-            className={`
+              bg-red-600
               text-white
               rounded-xl
               p-4
-
-              ${
-                totalSaidas === 0
-                  ? "bg-red-400"
-                  : "bg-red-600"
-              }
-            `}
+              shadow-lg
+            "
           >
             <div>
-              Despesas + Investimentos
+              Despesas
             </div>
 
             <div className="text-3xl font-bold mt-2">
-              {totalSaidas.toLocaleString(
+              {totalDespesas.toLocaleString(
+                "pt-BR",
+                {
+                  style: "currency",
+                  currency: "BRL",
+                }
+              )}
+            </div>
+          </div>
+
+          <div
+            className="
+              bg-purple-600
+              text-white
+              rounded-xl
+              p-4
+              shadow-lg
+            "
+          >
+            <div>
+              Investimentos
+            </div>
+
+            <div className="text-3xl font-bold mt-2">
+              {totalInvestimentos.toLocaleString(
                 "pt-BR",
                 {
                   style: "currency",
@@ -290,7 +410,7 @@ export default async function ContaCorrentePage({
             text-white
             rounded-xl
             p-4
-
+            shadow-lg
             ${
               saldoPlanejado >= 0
                 ? "bg-blue-600"
@@ -311,14 +431,14 @@ export default async function ContaCorrentePage({
               }
             )}
           </div>
-        </div> 
+        </div>  
 
         <div
           className={`
             text-white
             rounded-xl
             p-4
-
+            shadow-lg
             ${
               saldoAtual >= 0
                 ? "bg-blue-600"
@@ -341,6 +461,364 @@ export default async function ContaCorrentePage({
           </div>
         </div>
 
+        <div
+            className={`
+              text-white
+              rounded-xl
+              p-4
+              shadow-lg
+              ${
+                resultadoMes >= 0
+                  ? "bg-emerald-700"
+                  : "bg-red-700"
+              }
+            `}
+          >
+            <div>
+              Resultado do Mês
+            </div>
+
+            <div className="text-3xl font-bold mt-2">
+              {resultadoMes.toLocaleString(
+                "pt-BR",
+                {
+                  style: "currency",
+                  currency: "BRL",
+                }
+              )}
+            </div>
+          </div>
+
+          <div
+            className={`
+              text-white
+              rounded-xl
+              p-4
+              shadow-lg
+              ${
+                desvio >= 0
+                  ? "bg-blue-700"
+                  : "bg-orange-700"
+              }
+            `}
+          >
+            <div>
+              Desvio
+            </div>
+
+            <div className="text-3xl font-bold mt-2">
+              {desvio.toLocaleString(
+                "pt-BR",
+                {
+                  style: "currency",
+                  currency: "BRL",
+                }
+              )}
+            </div>
+          </div>
+
+      </div>
+
+      <div
+        className="
+          bg-white
+          rounded-xl
+          border
+          p-6
+          mb-6
+        "
+      >
+        <h2
+          className="
+            text-lg
+            font-semibold
+            mb-4
+          "
+        >
+          Planejado x Realizado
+        </h2>
+
+        <div
+          className="
+            grid
+            grid-cols-3
+            gap-4
+          "
+        >
+          <div>
+            <div className="text-slate-500">
+              Planejado
+            </div>
+
+            <div className="text-xl font-bold">
+              {totalPlanejado.toLocaleString(
+                "pt-BR",
+                {
+                  style: "currency",
+                  currency: "BRL",
+                }
+              )}
+            </div>
+          </div>
+
+          <div>
+            <div className="text-slate-500">
+              Realizado
+            </div>
+
+            <div className="text-xl font-bold">
+              {totalRealizado.toLocaleString(
+                "pt-BR",
+                {
+                  style: "currency",
+                  currency: "BRL",
+                }
+              )}
+            </div>
+          </div>
+
+          <div>
+            <div className="text-slate-500">
+              Diferença
+            </div>
+
+            <div
+              className={`
+                text-xl
+                font-bold
+
+                ${
+                  desvio >= 0
+                    ? "text-green-600"
+                    : "text-red-600"
+                }
+              `}
+            >
+              {desvio.toLocaleString(
+                "pt-BR",
+                {
+                  style: "currency",
+                  currency: "BRL",
+                }
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+      `
+
+      <div
+        className="
+          bg-white
+          rounded-xl
+          border
+          p-6
+          mb-6
+        "
+      >
+        <h2
+          className="
+            text-lg
+            font-semibold
+            mb-4
+          "
+        >
+          Resumo por Categoria
+        </h2>
+
+        <div className="space-y-3">
+
+          {categoriasOrdenadas.map(
+            ([nome, valor]) => (
+              <div
+                key={nome}
+                className="
+                  flex
+                  justify-between
+                  border-b
+                  pb-2
+                "
+              >
+                <span>
+                  {nome}
+                </span>
+
+                <span
+                  className="
+                    font-medium
+                  "
+                >
+                  {valor.toLocaleString(
+                    "pt-BR",
+                    {
+                      style: "currency",
+                      currency: "BRL",
+                    }
+                  )}
+                </span>
+
+              </div>
+            )
+          )}
+
+        </div>
+      </div>
+
+      <div
+        className="
+          bg-white
+          rounded-xl
+          border
+          p-6
+          mb-6
+        "
+      >
+        <h2
+          className="
+            text-lg
+            font-semibold
+            mb-4
+          "
+        >
+          Top 5 Categorias
+        </h2>
+
+        <div className="space-y-3">
+
+          {top5Categorias.map(
+            ([nome, valor], index) => (
+              <div
+                key={nome}
+                className="
+                  flex
+                  justify-between
+                  border-b
+                  pb-2
+                "
+              >
+                <span>
+                  {index + 1}. {nome}
+                </span>
+
+                <span className="font-medium">
+                  {valor.toLocaleString(
+                    "pt-BR",
+                    {
+                      style: "currency",
+                      currency: "BRL",
+                    }
+                  )}
+                </span>
+              </div>
+            )
+          )}
+
+        </div>
+      </div>
+
+      <div
+        className="
+          bg-white
+          rounded-xl
+          border
+          p-6
+          mb-6
+        "
+      >
+        <h2
+          className="
+            text-lg
+            font-semibold
+            mb-4
+          "
+        >
+          Distribuição por Categoria
+        </h2>
+
+        <GraficoCategorias
+          dados={
+            dadosGraficoCategorias
+          }
+        />
+      </div>
+
+      <div
+        className="
+          bg-white
+          rounded-xl
+          border
+          p-6
+          mb-6
+        "
+      >
+        <h2
+          className="
+            text-lg
+            font-semibold
+            mb-4
+          "
+        >
+          Receitas x Despesas x Investimentos
+        </h2>
+
+        <GraficoResumoFinanceiro
+          receitas={totalReceitas}
+          despesas={totalDespesas}
+          investimentos={totalInvestimentos}
+        />
+      </div>
+      ``
+
+      <div
+        className="
+          bg-white
+          rounded-xl
+          border
+          p-6
+          mb-6
+        "
+      >
+        <h2
+          className="
+            text-lg
+            font-semibold
+            mb-4
+          "
+        >
+          Top 5 Categorias
+        </h2>
+
+        <div className="space-y-3">
+
+          {top5Categorias.map(
+            ([nome, valor], index) => (
+              <div
+                key={nome}
+                className="
+                  flex
+                  justify-between
+                  border-b
+                  pb-2
+                "
+              >
+                <span>
+                  {index + 1}. {nome}
+                </span>
+
+                <span className="font-medium">
+                  {valor.toLocaleString(
+                    "pt-BR",
+                    {
+                      style: "currency",
+                      currency: "BRL",
+                    }
+                  )}
+                </span>
+              </div>
+            )
+          )}
+
+        </div>
       </div>
 
       <div
@@ -352,11 +830,17 @@ export default async function ContaCorrentePage({
         "
       >
 
-        <table className="w-full">
+        <table
+          className="
+            w-full
+            text-sm
+          "
+        >
 
           <thead
             className="
               bg-slate-100
+              text-slate-700
             "
           >
             <tr>
@@ -388,11 +872,18 @@ export default async function ContaCorrentePage({
               ) => (
                 <tr
                   key={lancamento.id}
-                  className="
+                  className={`
                     border-t
                     hover:bg-slate-50
                     transition
-                  "
+
+                    ${
+                      lancamento.modalidade ===
+                      "INVESTIMENTO"
+                        ? "bg-purple-50"
+                        : ""
+                    }
+                  `}
                 >
                   <td className="px-4 py-3">
                     {new Date(
@@ -471,8 +962,14 @@ export default async function ContaCorrentePage({
                     }
                   </td>
 
-                  <td className="flex gap-4 justify-center">
-                    <div className="flex gap-2">
+                  <td className="px-4 py-3 text-center">
+                    <div
+                      className="
+                        flex
+                        justify-center
+                        gap-3
+                      "
+                    >
 
                       <ModalEditarLancamento
                         lancamento={lancamento}
