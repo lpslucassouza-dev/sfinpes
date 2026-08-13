@@ -48,8 +48,8 @@ export default function GraficoResumoFinanceiro({
             }
           />
           <Tooltip
-            formatter={(value: number) =>
-              value.toLocaleString(
+            formatter={(value) =>
+              Number(value).toLocaleString(
                 "pt-BR",
                 {
                   style: "currency",
