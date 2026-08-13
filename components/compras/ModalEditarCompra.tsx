@@ -94,12 +94,10 @@ export default function ModalEditarCompra({
       <Dialog.Trigger asChild>
         <button
           className="
-            px-2
-            py-1
-            rounded-lg
-            border
-            hover:bg-slate-100
-          "
+            text-slate-600
+            hover:text-orange-500
+            transition
+            "
         >
           ✏️
         </button>

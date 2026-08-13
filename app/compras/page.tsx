@@ -237,28 +237,28 @@ const encerrando = compras
     switch (status) {
       case "INICIO":
         return (
-          <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium">
+          <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs font-medium">
             Início
           </span>
         );
 
       case "CORRENTE":
         return (
-          <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-medium">
+          <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-medium">
             Corrente
           </span>
         );
 
       case "FIM":
         return (
-          <span className="bg-orange-100 text-orange-700 px-2 py-1 rounded-full text-xs font-medium">
+          <span className="bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full text-xs font-medium">
             Fim
           </span>
         );
 
       case "UNICA":
         return (
-          <span className="bg-slate-100 text-slate-700 px-2 py-1 rounded-full text-xs font-medium">
+          <span className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full text-xs font-medium">
             Única
           </span>
         );
@@ -272,7 +272,7 @@ const encerrando = compras
     <main className="max-w-[1600px] mx-auto p-8">
       {/* Header */}
 
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-2">
 
           <div>
             <h1 className="text-3xl font-bold">
@@ -294,14 +294,25 @@ const encerrando = compras
 
         {/* Filtros */}
 
-        <FiltrosCompras
-          mes={mes}
-          ano={ano}
-          cartao={cartao}
-          usuario={usuario}
-          cartoes={cartoes}
-          usuarios={usuarios}
-        />
+        <div
+          className="
+            flex
+            justify-center
+          "
+        >
+          <div className="flex gap-3">
+
+            <FiltrosCompras
+              mes={mes}
+              ano={ano}
+              cartao={cartao}
+              usuario={usuario}
+              cartoes={cartoes}
+              usuarios={usuarios}
+            />
+
+          </div>
+        </div>
 
         {/* Cards Resumo */}
 
@@ -337,55 +348,55 @@ const encerrando = compras
         "
       >
 
-        <table className="w-full">
+        <table className="w-full text-xs">
 
           <thead className="bg-slate-300">
             <tr>
-              <th className="text-left p-3">
+              <th className="text-left p-2">
                 Data Compra
               </th>
 
-              <th className="text-left p-3">
+              <th className="text-left p-2">
                 Competência
               </th>
 
-              <th className="text-left p-3">
+              <th className="text-left p-2">
                 Cartão
               </th>
 
-              <th className="text-left p-3">
+              <th className="text-left p-2">
                 Usuário
               </th>
 
-              <th className="text-left p-3">
+              <th className="text-left p-2">
                 Categoria
               </th>
 
-              <th className="text-left p-3">
+              <th className="text-left p-2">
                 SubCategoria
               </th>
 
-              <th className="text-left p-3">
+              <th className="text-left p-2">
                 Descrição
               </th>
 
-              <th className="text-left p-3">
+              <th className="text-left p-2">
                 Parcela
               </th>
 
-              <th className="text-left p-3">
+              <th className="text-left p-2">
                 Status
               </th>
 
-              <th className="text-right p-3">
+              <th className="text-right p-2">
                 Valor
               </th>
 
-              <th className="text-right p-3">
+              <th className="text-right p-2">
                 Cashback
               </th>
 
-              <th className="text-center p-3">
+              <th className="text-center p-2">
                 Ações
               </th>
             </tr>
@@ -413,13 +424,13 @@ const encerrando = compras
                   transition
                 "
               >
-                <td className="px-3 py-4">
+                <td className="px-2 py-1">
                   {new Date(
                     parcela.compra.dataCompra
                   ).toLocaleDateString("pt-BR")}
                 </td>
 
-                <td className="px-3 py-4">
+                <td className="px-2 py-1">
                   {meses[
                     parcela.competenciaMes - 1
                   ]}
@@ -428,28 +439,28 @@ const encerrando = compras
 
                 </td>
 
-                <td className="px-3 py-4">
+                <td className="px-2 py-1">
                   {parcela.compra.cartao.nome}
                 </td>
 
-                <td className="px-3 py-4">
+                <td className="px-2 py-1">
                   {parcela.compra.usuario.nome}
                 </td>
 
-                <td className="px-3 py-4">
+                <td className="px-2 py-1">
                   {parcela.compra.categoria.nome}
                 </td>
 
-                <td className="px-3 py-4">
+                <td className="px-2 py-1">
                   {parcela.compra.subCategoria?.nome ?? "-"}
                 </td>
 
 
-                <td className="px-3 py-4">
+                <td className="px-2 py-1">
                   {parcela.compra.descricao}
                 </td>
 
-                <td className="px-3 py-4">
+                <td className="px-2 py-1">
                   <span className="font-medium text-slate-800">
                     (
                     {String(parcela.numeroParcela).padStart(2, "0")}
@@ -459,23 +470,23 @@ const encerrando = compras
                   </span>
                 </td>
 
-                <td className="px-3 py-4">
+                <td className="px-2 py-1">
                   {getStatusBadge(parcela.statusParcela)}
                 </td>
 
-                <td className="px-3 py-4 text-right">
+                <td className="px-2 py-1 text-right">
                   {formatCurrency(
                     Number(parcela.valorParcela)
                   )}
                 </td>
 
-                <td className="px-3 py-4 text-right font-medium text-emerald-600">
+                <td className="px-2 py-1 text-right font-medium text-emerald-600">
                   {formatCurrency(
                     Number(parcela.cashback)
                   )}
                 </td>
 
-                <td className="px-3 py-4 text-center">
+                <td className="px-2 py-2 text-center whitespace-nowrap">
                   <div className="flex justify-center gap-2">
 
                     <ModalEditarCompra

@@ -59,7 +59,7 @@ export default function CardsResumo({
           border-r
           border-b
           border-slate-200
-          p-5
+          p-3
           shadow-md
         `}
         >

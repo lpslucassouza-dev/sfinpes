@@ -226,15 +226,6 @@ export default async function ContaCorrentePage({
 
   const top5Categorias =
     categoriasOrdenadas.slice(0, 5);
-  ``
-
-  const dadosGraficoCategorias =
-    categoriasOrdenadas.map(
-      ([nome, valor]) => ({
-        nome,
-        valor,
-      })
-    );
 
   const resumoReceitas =
     receitas.reduce(
@@ -312,31 +303,44 @@ export default async function ContaCorrentePage({
           categorias={categorias}
         />
       </div>
-      <div className="mb-6">
-        <FiltrosContaCorrente
-          mes={mes}
-          ano={ano}
-        />
+      <div
+        className="
+          flex
+          justify-center
+          mb-4
+        "
+      >
+        <div
+          className="
+            flex
+            gap-3
+          "
+        >
+          <FiltrosContaCorrente
+            mes={mes}
+            ano={ano}
+          />
+        </div>
       </div>
 
         <div
           className="
             grid
-            grid-cols-4
+            grid-cols-6
             gap-4
             mb-8
           "
         >
           <div
               className="
-                bg-green-600
+                bg-emerald-600
                 text-white
                 rounded-xl
                 p-4
                 shadow-lg
               "
             >
-              <div>
+              <div text-left>
                 Receitas
               </div>
 
@@ -345,6 +349,7 @@ export default async function ContaCorrentePage({
                 text-3xl
                 font-bold
                 mt-2
+                text-right
               "
             >
               {totalReceitas.toLocaleString(
@@ -359,18 +364,18 @@ export default async function ContaCorrentePage({
 
           <div
             className="
-              bg-red-600
+              bg-red-500
               text-white
               rounded-xl
               p-4
               shadow-lg
             "
           >
-            <div>
+            <div text-left>
               Despesas
             </div>
 
-            <div className="text-3xl font-bold mt-2">
+            <div className="text-3xl font-bold mt-2 text-right">
               {totalDespesas.toLocaleString(
                 "pt-BR",
                 {
@@ -383,18 +388,18 @@ export default async function ContaCorrentePage({
 
           <div
             className="
-              bg-purple-600
+              bg-violet-600
               text-white
               rounded-xl
               p-4
               shadow-lg
             "
           >
-            <div>
+            <div text-left>
               Investimentos
             </div>
 
-            <div className="text-3xl font-bold mt-2">
+            <div className="text-3xl font-bold mt-2 text-right">
               {totalInvestimentos.toLocaleString(
                 "pt-BR",
                 {
@@ -413,16 +418,16 @@ export default async function ContaCorrentePage({
             shadow-lg
             ${
               saldoPlanejado >= 0
-                ? "bg-blue-600"
-                : "bg-red-700"
+                ? "bg-sky-600"
+                : "bg-amber-600"
             }
           `}
         >
-          <div>
+          <div text-left>
             Saldo Planejado
           </div>
 
-          <div className="text-3xl font-bold mt-2">
+          <div className="text-3xl font-bold mt-2 text-right">
             {saldoPlanejado.toLocaleString(
               "pt-BR",
               {
@@ -441,16 +446,16 @@ export default async function ContaCorrentePage({
             shadow-lg
             ${
               saldoAtual >= 0
-                ? "bg-blue-600"
-                : "bg-red-700"
+                ? "bg-blue-700"
+                : "bg-red-600"
             }
           `}
         >
-          <div>
+          <div text-left>
             Saldo Atual
           </div>
 
-          <div className="text-3xl font-bold mt-2">
+          <div className="text-3xl font-bold mt-2 text-right">
             {saldoAtual.toLocaleString(
               "pt-BR",
               {
@@ -469,16 +474,16 @@ export default async function ContaCorrentePage({
               shadow-lg
               ${
                 resultadoMes >= 0
-                  ? "bg-emerald-700"
+                  ? "bg-green-700"
                   : "bg-red-700"
               }
             `}
           >
-            <div>
+            <div text-left>
               Resultado do Mês
             </div>
 
-            <div className="text-3xl font-bold mt-2">
+            <div className="text-3xl font-bold mt-2 text-right">
               {resultadoMes.toLocaleString(
                 "pt-BR",
                 {
@@ -488,336 +493,92 @@ export default async function ContaCorrentePage({
               )}
             </div>
           </div>
-
-          <div
-            className={`
-              text-white
-              rounded-xl
-              p-4
-              shadow-lg
-              ${
-                desvio >= 0
-                  ? "bg-blue-700"
-                  : "bg-orange-700"
-              }
-            `}
-          >
-            <div>
-              Desvio
-            </div>
-
-            <div className="text-3xl font-bold mt-2">
-              {desvio.toLocaleString(
-                "pt-BR",
-                {
-                  style: "currency",
-                  currency: "BRL",
-                }
-              )}
-            </div>
-          </div>
-
       </div>
 
       <div
         className="
-          bg-white
-          rounded-xl
-          border
-          p-6
+          grid
+          lg:grid-cols-2
+          gap-6
           mb-6
         "
       >
-        <h2
-          className="
-            text-lg
-            font-semibold
-            mb-4
-          "
-        >
-          Planejado x Realizado
-        </h2>
 
         <div
           className="
-            grid
-            grid-cols-3
-            gap-4
+            bg-white
+            rounded-xl
+            border
+            p-6
           "
         >
-          <div>
-            <div className="text-slate-500">
-              Planejado
-            </div>
+          <h2
+            className="
+              text-lg
+              font-semibold
+              mb-4
+            "
+          >
+            Resumo por Categoria
+          </h2>
 
-            <div className="text-xl font-bold">
-              {totalPlanejado.toLocaleString(
-                "pt-BR",
-                {
-                  style: "currency",
-                  currency: "BRL",
-                }
-              )}
-            </div>
-          </div>
+          <div className="space-y-3">
 
-          <div>
-            <div className="text-slate-500">
-              Realizado
-            </div>
-
-            <div className="text-xl font-bold">
-              {totalRealizado.toLocaleString(
-                "pt-BR",
-                {
-                  style: "currency",
-                  currency: "BRL",
-                }
-              )}
-            </div>
-          </div>
-
-          <div>
-            <div className="text-slate-500">
-              Diferença
-            </div>
-
-            <div
-              className={`
-                text-xl
-                font-bold
-
-                ${
-                  desvio >= 0
-                    ? "text-green-600"
-                    : "text-red-600"
-                }
-              `}
-            >
-              {desvio.toLocaleString(
-                "pt-BR",
-                {
-                  style: "currency",
-                  currency: "BRL",
-                }
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-      `
-
-      <div
-        className="
-          bg-white
-          rounded-xl
-          border
-          p-6
-          mb-6
-        "
-      >
-        <h2
-          className="
-            text-lg
-            font-semibold
-            mb-4
-          "
-        >
-          Resumo por Categoria
-        </h2>
-
-        <div className="space-y-3">
-
-          {categoriasOrdenadas.map(
-            ([nome, valor]) => (
-              <div
-                key={nome}
-                className="
-                  flex
-                  justify-between
-                  border-b
-                  pb-2
-                "
-              >
-                <span>
-                  {nome}
-                </span>
-
-                <span
+            {categoriasOrdenadas.map(
+              ([nome, valor]) => (
+                <div
+                  key={nome}
                   className="
-                    font-medium
+                    flex
+                    justify-between
+                    border-b
+                    pb-2
                   "
                 >
-                  {valor.toLocaleString(
-                    "pt-BR",
-                    {
-                      style: "currency",
-                      currency: "BRL",
-                    }
-                  )}
-                </span>
+                  <span>
+                    {nome}
+                  </span>
 
-              </div>
-            )
-          )}
+                  <span className="font-medium">
+                    {valor.toLocaleString(
+                      "pt-BR",
+                      {
+                        style: "currency",
+                        currency: "BRL",
+                      }
+                    )}
+                  </span>
+                </div>
+              )
+            )}
 
-        </div>
-      </div>
-
-      <div
-        className="
-          bg-white
-          rounded-xl
-          border
-          p-6
-          mb-6
-        "
-      >
-        <h2
-          className="
-            text-lg
-            font-semibold
-            mb-4
-          "
-        >
-          Top 5 Categorias
-        </h2>
-
-        <div className="space-y-3">
-
-          {top5Categorias.map(
-            ([nome, valor], index) => (
-              <div
-                key={nome}
-                className="
-                  flex
-                  justify-between
-                  border-b
-                  pb-2
-                "
-              >
-                <span>
-                  {index + 1}. {nome}
-                </span>
-
-                <span className="font-medium">
-                  {valor.toLocaleString(
-                    "pt-BR",
-                    {
-                      style: "currency",
-                      currency: "BRL",
-                    }
-                  )}
-                </span>
-              </div>
-            )
-          )}
+          </div>
 
         </div>
-      </div>
 
-      <div
-        className="
-          bg-white
-          rounded-xl
-          border
-          p-6
-          mb-6
-        "
-      >
-        <h2
+        <div
           className="
-            text-lg
-            font-semibold
-            mb-4
+            bg-white
+            rounded-xl
+            border
+            p-6
           "
         >
-          Distribuição por Categoria
-        </h2>
+          <h2
+            className="
+              text-lg
+              font-semibold
+              mb-4
+              "
+          >
+            Receitas x Despesas x Investimentos
+          </h2>
 
-        <GraficoCategorias
-          dados={
-            dadosGraficoCategorias
-          }
-        />
-      </div>
-
-      <div
-        className="
-          bg-white
-          rounded-xl
-          border
-          p-6
-          mb-6
-        "
-      >
-        <h2
-          className="
-            text-lg
-            font-semibold
-            mb-4
-          "
-        >
-          Receitas x Despesas x Investimentos
-        </h2>
-
-        <GraficoResumoFinanceiro
-          receitas={totalReceitas}
-          despesas={totalDespesas}
-          investimentos={totalInvestimentos}
-        />
-      </div>
-      ``
-
-      <div
-        className="
-          bg-white
-          rounded-xl
-          border
-          p-6
-          mb-6
-        "
-      >
-        <h2
-          className="
-            text-lg
-            font-semibold
-            mb-4
-          "
-        >
-          Top 5 Categorias
-        </h2>
-
-        <div className="space-y-3">
-
-          {top5Categorias.map(
-            ([nome, valor], index) => (
-              <div
-                key={nome}
-                className="
-                  flex
-                  justify-between
-                  border-b
-                  pb-2
-                "
-              >
-                <span>
-                  {index + 1}. {nome}
-                </span>
-
-                <span className="font-medium">
-                  {valor.toLocaleString(
-                    "pt-BR",
-                    {
-                      style: "currency",
-                      currency: "BRL",
-                    }
-                  )}
-                </span>
-              </div>
-            )
-          )}
-
+          <GraficoResumoFinanceiro
+            receitas={totalReceitas}
+            despesas={totalDespesas}
+            investimentos={totalInvestimentos}
+          />
         </div>
       </div>
 
@@ -867,24 +628,23 @@ export default async function ContaCorrentePage({
           <tbody>
 
             {lancamentos.map(
-              (
-                lancamento
-              ) => (
+              (lancamento, index) => (
                 <tr
                   key={lancamento.id}
                   className={`
                     border-t
-                    hover:bg-slate-50
-                    transition
 
                     ${
-                      lancamento.modalidade ===
-                      "INVESTIMENTO"
-                        ? "bg-purple-50"
-                        : ""
+                      index % 2 === 0
+                        ? "bg-white"
+                        : "bg-slate-50"
                     }
+
+                    hover:bg-blue-50
+                    transition
                   `}
                 >
+                
                   <td className="px-4 py-3">
                     {new Date(
                       lancamento.data

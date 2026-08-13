@@ -7,6 +7,7 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
+  Cell
 } from "recharts";
 
 type Props = {
@@ -37,17 +38,36 @@ export default function GraficoResumoFinanceiro({
   ];
 
   return (
-    <div className="h-72">
+    <div className="h-96">
       <ResponsiveContainer>
         <BarChart data={dados}>
           <XAxis dataKey="nome" />
-          <YAxis />
-          <Tooltip />
+          <YAxis
+            tickFormatter={(value) =>
+              `R$ ${value}`
+            }
+          />
+          <Tooltip
+            formatter={(value: number) =>
+              value.toLocaleString(
+                "pt-BR",
+                {
+                  style: "currency",
+                  currency: "BRL",
+                }
+              )
+            }
+          />
 
           <Bar
             dataKey="valor"
-            fill="#2563eb"
-          />
+            radius={[8, 8, 0, 0]}
+          >
+            <Cell fill="#16a34a" />
+            <Cell fill="#dc2626" />
+            <Cell fill="#9333ea" />
+          </Bar>
+
         </BarChart>
       </ResponsiveContainer>
     </div>

@@ -27,11 +27,9 @@ export default function ModalParcelas({
       <Dialog.Trigger asChild>
         <button
           className="
-            px-2
-            py-1
-            rounded-lg
-            border
-            hover:bg-slate-100
+            text-slate-600
+            hover:text-blue-600
+            transition
           "
         >
           📋

@@ -26,11 +26,9 @@ export default function ModalExcluirCompra({
       <Dialog.Trigger asChild>
         <button
           className="
-            px-2
-            py-1
-            rounded-lg
-            border
-            hover:bg-red-50
+            text-slate-600
+            hover:text-red-600
+            transition
           "
         >
           🗑️
