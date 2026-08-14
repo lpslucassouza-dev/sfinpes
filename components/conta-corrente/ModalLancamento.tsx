@@ -87,11 +87,13 @@ export default function ModalLancamento({
     }
   }
 
-  const inputClass = `
+ const inputClass = `
     w-full
     border
     rounded-lg
-    p-2
+    px-3
+    py-2
+    text-sm
   `;
 
   return (
@@ -137,7 +139,7 @@ export default function ModalLancamento({
             rounded-2xl
             p-6
             w-full
-            max-w-3xl
+            max-w-xl
           "
         >
 
@@ -168,7 +170,7 @@ export default function ModalLancamento({
             }
             className="space-y-4"
           >
-
+          <div className="grid grid-cols-2 gap-3">
             <input
               type="date"
               {...register("data")}
@@ -194,7 +196,9 @@ export default function ModalLancamento({
               </option>
 
             </select>
+          </div>
 
+          <div className="grid grid-cols-2 gap-3">
             <select
               {...register(
                 "categoriaId"
@@ -250,6 +254,7 @@ export default function ModalLancamento({
                 )
               )}
             </select>
+          </div>
 
             <input
               placeholder="Descrição"
@@ -258,7 +263,8 @@ export default function ModalLancamento({
               )}
               className={inputClass}
             />
-
+          
+          <div className="grid grid-cols-2 gap-3">
             <input
               type="number"
               step="0.01"
@@ -278,11 +284,13 @@ export default function ModalLancamento({
               )}
               className={inputClass}
             />
-
+          </div>
+          
+          <div className="flex justify-center">
             <button
               type="submit"
               className="
-                w-full
+                w-48
                 bg-emerald-600
                 text-white
                 py-3
@@ -291,8 +299,8 @@ export default function ModalLancamento({
             >
               Salvar
             </button>
-
-          </form>
+          </div>
+         </form>
 
         </Dialog.Content>
 

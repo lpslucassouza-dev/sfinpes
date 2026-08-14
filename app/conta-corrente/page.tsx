@@ -54,6 +54,10 @@ export default async function ContaCorrentePage({
           where: {
             ativo: true,
           },
+
+          orderBy: {
+            nome: "asc",
+            },
         },
       },
 
@@ -71,7 +75,6 @@ export default async function ContaCorrentePage({
             mes - 1,
             1
           ),
-
           lt: new Date(
             ano,
             mes,
@@ -85,10 +88,51 @@ export default async function ContaCorrentePage({
         subCategoria: true,
       },
 
-      orderBy: {
-        data: "asc",
+      orderBy: [
+        {
+          data: "asc",
+        },
+        {
+          modalidade: "asc",
+        },
+        {
+          categoria: {
+            nome: "asc",
+          },
+        },
+      ],
+    }); 
+
+const todosLancamentos =
+  await prisma.lancamentoContaCorrente.findMany({
+    where: {
+      valorRealizado: {
+        not: 0,
       },
-    });   
+    },
+  });
+    
+const saldoAtualConta =
+  todosLancamentos.reduce(
+    (acc, item) => {
+
+      const valor =
+        Number(
+          item.valorRealizado
+        );
+
+      if (
+        item.modalidade ===
+        "RECEITA"
+      ) {
+        return acc + valor;
+      }
+
+      return acc - valor;
+
+    },
+    0
+  );
 
   const receitas = lancamentos.filter(
     (lancamento) =>
@@ -322,7 +366,9 @@ export default async function ContaCorrentePage({
           />
         </div>
       </div>
-
+      
+      /* inicio dos cards */
+      
         <div
           className="
             grid
@@ -341,7 +387,7 @@ export default async function ContaCorrentePage({
               "
             >
               <div text-left>
-                Receitas
+                Receitas Realizadas
               </div>
 
             <div
@@ -372,7 +418,7 @@ export default async function ContaCorrentePage({
             "
           >
             <div text-left>
-              Despesas
+              Despesas Realizadas
             </div>
 
             <div className="text-3xl font-bold mt-2 text-right">
@@ -396,7 +442,7 @@ export default async function ContaCorrentePage({
             "
           >
             <div text-left>
-              Investimentos
+              Investimentos Realizados
             </div>
 
             <div className="text-3xl font-bold mt-2 text-right">
@@ -439,34 +485,6 @@ export default async function ContaCorrentePage({
         </div>  
 
         <div
-          className={`
-            text-white
-            rounded-xl
-            p-4
-            shadow-lg
-            ${
-              saldoAtual >= 0
-                ? "bg-blue-700"
-                : "bg-red-600"
-            }
-          `}
-        >
-          <div text-left>
-            Saldo Atual
-          </div>
-
-          <div className="text-3xl font-bold mt-2 text-right">
-            {saldoAtual.toLocaleString(
-              "pt-BR",
-              {
-                style: "currency",
-                currency: "BRL",
-              }
-            )}
-          </div>
-        </div>
-
-        <div
             className={`
               text-white
               rounded-xl
@@ -493,6 +511,35 @@ export default async function ContaCorrentePage({
               )}
             </div>
           </div>
+
+        <div
+          className={`
+            text-white
+            rounded-xl
+            p-4
+            shadow-lg
+            ${
+              saldoAtual >= 0
+                ? "bg-blue-700"
+                : "bg-red-600"
+            }
+          `}
+        >
+          <div text-left>
+            Saldo Atual da Conta
+          </div>
+
+          <div className="text-3xl font-bold mt-2 text-right">
+            {saldoAtualConta.toLocaleString(
+              "pt-BR",
+              {
+                style: "currency",
+                currency: "BRL",
+              }
+            )}
+          </div>
+        </div>
+
       </div>
 
       <div

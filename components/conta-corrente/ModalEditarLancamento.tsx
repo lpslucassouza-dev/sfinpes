@@ -196,7 +196,7 @@ export default function ModalEditarLancamento({
             }
             className="space-y-4"
           >
-
+            <div className="grid grid-cols-2 gap-3">
             <input
               type="date"
               {...register("data")}
@@ -222,7 +222,8 @@ export default function ModalEditarLancamento({
               </option>
 
             </select>
-
+          </div>
+          
             <select
               {...register(
                 "categoriaId"
