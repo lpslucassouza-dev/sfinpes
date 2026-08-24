@@ -122,7 +122,9 @@ export default function ModalEditarLancamento({
     w-full
     border
     rounded-lg
-    p-2
+    px-3
+    py-2
+    text-sm
   `;
 
   return (
@@ -165,7 +167,7 @@ export default function ModalEditarLancamento({
             rounded-2xl
             p-6
             w-full
-            max-w-3xl
+            max-w-2xl
           "
         >
 
@@ -194,7 +196,7 @@ export default function ModalEditarLancamento({
                 onSubmit
               )
             }
-            className="space-y-4"
+            className="space-y-3"
           >
             <div className="grid grid-cols-2 gap-3">
             <input
@@ -224,6 +226,7 @@ export default function ModalEditarLancamento({
             </select>
           </div>
           
+          <div className="grid grid-cols-2 gap-3">
             <select
               {...register(
                 "categoriaId"
@@ -279,6 +282,8 @@ export default function ModalEditarLancamento({
                 )
               )}
             </select>
+          </div>
+
 
             <input
               placeholder="Descrição"
@@ -288,6 +293,7 @@ export default function ModalEditarLancamento({
               className={inputClass}
             />
 
+          <div className="grid grid-cols-2 gap-3">
             <input
               type="number"
               step="0.01"
@@ -307,19 +313,26 @@ export default function ModalEditarLancamento({
               )}
               className={inputClass}
             />
+          </div>
 
-            <button
-              type="submit"
-              className="
-                w-full
-                bg-emerald-600
-                text-white
-                py-3
-                rounded-lg
-              "
-            >
-              Salvar
-            </button>
+            <div className="flex justify-center">
+
+              <button
+                type="submit"
+                className="
+                  w-48
+                  rounded-lg
+                  bg-emerald-600
+                  py-3
+                  font-medium
+                  text-white
+                  hover:bg-emerald-700
+                "
+              >
+                Salvar
+              </button>
+
+            </div>
 
           </form>
 

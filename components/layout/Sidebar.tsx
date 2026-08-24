@@ -8,6 +8,7 @@ import UserInfo from "./UserInfo";
 import { useState } from "react";
 import { useEffect } from "react";
 import { Landmark } from "lucide-react";
+import { TrendingUp } from "lucide-react";
 
 const links = [
   {
@@ -24,6 +25,11 @@ const links = [
     href: "/conta-corrente",
     label: "Conta Corrente",
     icon: Landmark,
+  },
+  {
+    href: "/acoes",
+    label: "Ações",
+    icon: TrendingUp,
   },
 ];
 

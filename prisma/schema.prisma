@@ -178,3 +178,20 @@ model LancamentoContaCorrente {
 
   updatedAt DateTime @updatedAt
 }
+
+model Valuation {
+  id                   String   @id @default(cuid())
+  ticker               String
+  precoAtual           Float
+  precoJusto           Float
+  upsideDownside       Float
+  totalAcoes           BigInt
+  payout               Float
+  roe                  Float
+  taxaDesconto         Float
+  taxaDescontoPerpetua Float
+  crescimentoPerpetuo  Float
+  marketCapProjetado   Float
+  observacoes          String?
+  createdAt            DateTime @default(now())
+}

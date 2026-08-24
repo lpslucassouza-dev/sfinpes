@@ -19,9 +19,11 @@ async function main() {
     },
   });
 
-  console.log(
-    "Usuário criado."
-  );
+  {/* 
+      console.log(
+        "Usuário criado."
+      );
+  */}
 }
 
 main();
