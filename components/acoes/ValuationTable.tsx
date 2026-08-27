@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 type Props = {
   valuations: any[];
@@ -71,6 +72,49 @@ export default function ValuationTable({
           )
     );
 
+  async function handleDelete(
+    id: string,
+    ticker: string
+  ) {
+
+    const confirmed =
+      window.confirm(
+        `Deseja excluir o valuation de ${ticker}?`
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+
+      const response =
+        await fetch(
+          `/api/valuation/${id}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+      if (!response.ok) {
+        throw new Error();
+      }
+
+      alert(
+        "Valuation excluído com sucesso."
+      );
+
+      window.location.reload();
+
+    } catch {
+
+      alert(
+        "Erro ao excluir valuation."
+      );
+
+    }
+  }  
+
   return (
     <div
       className="
@@ -128,6 +172,16 @@ export default function ValuationTable({
                     ? " ↑"
                     : " ↓"
                 )}
+            </th>
+
+            <th
+              className="
+                px-4
+                py-3
+                text-center
+              "
+            >
+              ROE
             </th>
 
             <th
@@ -221,6 +275,16 @@ export default function ValuationTable({
                     : " ↓"
                 )}
             </th>
+
+            <th
+              className="
+                px-4
+                py-3
+                text-center
+              "
+            >
+              Ações
+            </th>
           </tr>
         </thead>
 
@@ -236,6 +300,10 @@ export default function ValuationTable({
               >
                 <td className="px-4 py-3 font-medium">
                   {valuation.ticker}
+                </td>
+
+                <td className="px-4 py-3 text-center">
+                  {valuation.roe.toFixed(2)}%
                 </td>
 
                 <td className="px-4 py-3 text-right">
@@ -291,6 +359,53 @@ export default function ValuationTable({
                     "pt-BR"
                   )}
                 </td>
+
+                  <td className="px-4 py-3 text-center">
+                    <div
+                      className="
+                        flex
+                        items-center
+                        justify-center
+                        gap-3
+                      "
+                    >
+                      <Link
+                      href={`/acoes/${valuation.id}`}
+                        className="
+                          rounded-md
+                          bg-blue-600
+                          px-3
+                          py-1
+                          text-sm
+                          text-white
+                          hover:bg-blue-700
+                        "
+                      >
+                        Visualizar
+                      </Link>
+
+                      <button
+                        onClick={() =>
+                          handleDelete(
+                            valuation.id,
+                            valuation.ticker
+                          )
+                        }
+                        className="
+                          rounded-md
+                          bg-red-600
+                          px-3
+                          py-1
+                          text-sm
+                          text-white
+                          hover:bg-red-700
+                        "
+                      >
+                        Excluir
+                      </button>
+                    </div>
+                  </td>
+
               </tr>
             )
           )}

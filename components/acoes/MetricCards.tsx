@@ -10,6 +10,7 @@ type Props = {
 
   payout: number;
   roe: number;
+  pl: number;
 };
 
 export default function MetricCards({
@@ -20,6 +21,7 @@ export default function MetricCards({
   marketCap,
   payout,
   roe,
+  pl,
 }: Props) {
   const cards = [
     {
@@ -37,9 +39,9 @@ export default function MetricCards({
     },
 
     {
-      title: "Market Cap",
+      title: "P/L",
       editable: false,
-      value: marketCap.toLocaleString("pt-BR"),
+      value: pl,
     },
 
     {

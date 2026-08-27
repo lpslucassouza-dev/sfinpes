@@ -8,6 +8,8 @@ import DcfTable from "./DcfTable";
 import AnnotationsCard from "./AnnotationsCard";
 import { useState } from "react";
 import { ValuationService } from "@/lib/valuation/services";
+import EmpresaInfoCard from "./EmpresaInfoCard";
+import Link from "next/link";
 
 export default function FormValuation() {
 
@@ -19,6 +21,13 @@ const [taxaDesconto, setTaxaDesconto] = useState(15);
 const [taxaDescontoPerpetua,setTaxaDescontoPerpetua,] = useState(10);
 const [crescimentoPerpetuo,setCrescimentoPerpetuo,] = useState(3);
 const currentYear = new Date().getFullYear();
+const [nomeEmpresa, setNomeEmpresa] = useState("");
+const [ticker, setTicker] = useState("");
+const [marketCapApi, setMarketCapApi] = useState(0);
+const [pl, setPl] = useState(0);
+const [lpa, setLpa] = useState(0);
+const [max52, setMax52] = useState(0);
+const [min52, setMin52] = useState(0);
 
 const [dcfRows, setDcfRows] =
     useState([
@@ -105,10 +114,6 @@ const [dcfRows, setDcfRows] =
       precoAtual,
       totalAcoes,
     });
-
-  const [ticker, setTicker] =
-    useState("");
-
   
 {/*    
     function handleSave() {
@@ -204,11 +209,113 @@ async function handleSave() {
   }
 }
 
+async function handleSearchTicker() {
+
+  if (!ticker) {
+    alert(
+      "Informe um ticker."
+    );
+
+    return;
+  }
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/acoes/buscar",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+
+          body: JSON.stringify({
+            ticker,
+          }),
+        }
+      );
+
+    const result =
+      await response.json();
+
+    const stock =
+      result.results?.[0];
+
+      //console.log("LONG NAME:",stock.longName);
+      console.log(stock);
+
+
+    if (!stock) {
+      throw new Error(
+        "Ativo não encontrado"
+      );
+    }
+
+    setPrecoAtual(
+      stock.regularMarketPrice
+    );
+
+    setNomeEmpresa(
+      stock.longName
+    );
+
+    setMarketCapApi(
+      stock.marketCap ?? 0
+    );
+
+    setPl(
+      stock.priceEarnings ?? 0
+    );
+
+    setLpa(
+      stock.earningsPerShare ?? 0
+    );
+
+    setMax52(
+      stock.fiftyTwoWeekHigh ?? 0
+    );
+
+    setMin52(
+      stock.fiftyTwoWeekLow ?? 0
+    );
+
+    //console.log("Nome empresa salvo:",stock.longName);
+
+    const totalAcoesCalculado =
+      Math.round(
+        stock.marketCap /
+        stock.regularMarketPrice
+      );
+
+    setTotalAcoes(
+      totalAcoesCalculado
+    );
+
+    console.log(result);
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "Erro ao buscar ativo."
+    );
+
+  }
+}
+
 
 //console.log("valuation", valuation);
 //console.log("valuation completo", valuation);
 //console.log("rows",dcfRows);
 //console.log(Object.keys(valuation));  
+//console.log("nomeEmpresa:",nomeEmpresa);
+
+
+
 
   return (
     <div className="bg-slate-50 min-h-screen">
@@ -222,11 +329,42 @@ async function handleSave() {
         "
       >
 
+      <div className="mb-4">
+        <Link href="/acoes"
+          className="
+            rounded-md
+            border
+            px-4
+            py-2
+            text-sm
+            hover:bg-slate-100
+            "
+          >
+            ← Voltar
+        </Link>
+      </div>
+
         <SearchBar
           ticker={ticker}
           setTicker={setTicker}
+          nomeEmpresa={nomeEmpresa}
+          onSearch={handleSearchTicker}
         />
 
+      {/*
+        <EmpresaInfoCard
+          nomeEmpresa={nomeEmpresa}
+          marketCap={marketCapApi}
+          pl={pl}
+          lpa={lpa}
+          max52={max52}
+          min52={min52}
+          precoAtual={precoAtual}
+          precoJusto={valuation.precoJusto}
+          upside={valuation.upsideDownside}
+        />
+      */}
+      
         <MetricCards
           precoAtual={precoAtual}
           setPrecoAtual={setPrecoAtual}
@@ -235,8 +373,8 @@ async function handleSave() {
           marketCap={marketCap}
           payout={payout}
           roe={roe}
+          pl={pl}
         />
-        
 
         <div className="grid grid-cols-12 gap-6">
 
