@@ -195,3 +195,55 @@ model Valuation {
   observacoes          String?
   createdAt            DateTime @default(now())
 }
+
+enum AssetType {
+  ACAO
+  FII
+  CRIPTO
+  ETF
+  FUNDO_INVESTIMENTO
+  TESOURO_DIRETO
+  PREV_PRIVADA
+}
+
+model Asset {
+  id String @id @default(cuid())
+
+  ticker String @unique
+
+  nome String
+
+  tipo AssetType
+
+  setor String?
+
+  segmento String?
+
+  valorAtual Float?
+
+  ultimaAtualizacao DateTime?
+
+  ativo Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transactions AssetTransaction[]
+}
+
+enum TransactionType {
+  COMPRA
+  VENDA
+}
+
+model AssetTransaction {
+  id String @id @default(cuid())
+  assetId String
+  tipoOperacao TransactionType
+  dataOperacao DateTime
+  quantidade Float
+  valorUnitario Float
+  valorTotal Float
+  createdAt DateTime @default(now())
+  asset Asset @relation(fields: [assetId], references: [id])
+}

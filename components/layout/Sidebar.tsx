@@ -11,9 +11,14 @@ import { Landmark } from "lucide-react";
 import { TrendingUp } from "lucide-react";
 
 const links = [
+   {
+    href: "/conta-corrente",
+    label: "Conta Corrente",
+    icon: Landmark,
+  },
   {
     href: "/compras",
-    label: "Compras",
+    label: "Cartões",
     icon: Home,
   },
   {
@@ -21,15 +26,33 @@ const links = [
     label: "Projeção",
     icon: Calendar,
   },
+
+];
+
+const finnControlLinks = [
   {
-    href: "/conta-corrente",
-    label: "Conta Corrente",
-    icon: Landmark,
+    href: "/finncontrol/carteira",
+    label: "Carteira",
+  },
+  {
+    href: "/finncontrol/ativos",
+    label: "Ativos",
+  },
+  {
+    href: "/finncontrol/lancamentos",
+    label: "Lançamentos",
+  },
+  {
+    href: "/finncontrol/consulta-ativos",
+    label: "Consulta por Ativo",
+  },
+  {
+    href: "/finncontrol/resumo-mensal",
+    label: "Resumo Mensal",
   },
   {
     href: "/acoes",
     label: "Ações",
-    icon: TrendingUp,
   },
 ];
 
@@ -56,28 +79,31 @@ export default function Sidebar() {
 
   const [configOpen, setConfigOpen] = useState(false);
 
+  const [finnControlOpen, setFinnControlOpen] = useState(true);
+
   useEffect(() => {
 
-    if (configuracaoAtiva) {
-      setConfigOpen(true);
-    } else {
-      setConfigOpen(false);
-    }
+  setConfigOpen(configuracaoAtiva);
 
-  }, [pathname]);
+  setFinnControlOpen(
+    finnControlAtivo
+  );
+
+}, [pathname]);
 
   const configuracaoAtiva =
           pathname.startsWith("/categorias") ||
           pathname.startsWith("/cartoes") ||
           pathname.startsWith("/usuarios");
 
+  const finnControlAtivo = pathname.startsWith("/finncontrol");
+
   return (
     <aside
       className="
         fixed
+        inset-y-0
         left-0
-        top-0
-        h-screen
         w-52
         bg-slate-900
         text-white
@@ -121,6 +147,77 @@ export default function Sidebar() {
             );
         })}
         </nav>
+
+        <div className="px-3">
+
+            <button
+              onClick={() =>
+                setFinnControlOpen(
+                  !finnControlOpen
+                )
+              }
+              className={`
+                w-full
+                flex
+                items-center
+                justify-between
+                px-4
+                py-3
+                rounded-xl
+                transition
+
+                ${
+                  finnControlAtivo
+                    ? "bg-slate-800 text-white"
+                    : "text-slate-300 hover:bg-slate-800"
+                }
+              `}
+            >
+
+              <div className="flex items-center gap-3">
+
+                <TrendingUp size={18} />
+
+                <span>
+                  Investimentos
+                </span>
+
+              </div>
+
+              <span>
+                {finnControlOpen ? "▼" : "▶"}
+              </span>
+
+            </button>
+
+            {finnControlOpen && (
+
+              <div className="ml-2 mt-2 flex flex-col gap-1">
+
+                {finnControlLinks.map((link) => {
+
+                  const ativo =
+                    pathname === link.href;
+
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className={
+                          ativo
+                            ? "flex items-center gap-3 px-3 py-2 ml-6 rounded-lg text-sm transition text-white bg-slate-800"
+                            : "flex items-center gap-3 px-3 py-2 ml-6 rounded-lg text-sm transition text-slate-400 hover:bg-slate-800 hover:text-white"
+                        }
+                    >
+                      {link.label}
+                    </Link>
+                  );
+
+                })}
+              </div>
+            )}
+                    
+        </div>
 
         <button
           onClick={() =>
