@@ -72,7 +72,7 @@ ValuationDetailsPage({
     <main className="p-8">
 
       <div className="mb-6">
-        <Link href="/acoes"
+        <Link href="/finncontrol/acoes"
               className="
                 rounded-md
                 border

@@ -18,36 +18,29 @@ for (const asset of assets) {
     const ultimaAtualizacao =
       asset.ultimaAtualizacao;
 
-    if (ultimaAtualizacao) {
-
-      const diferencaHoras =
-        (
-          agora.getTime() -
-          ultimaAtualizacao.getTime()
-        ) /
-        (1000 * 60 * 60);
-
-      if (diferencaHoras < 12) {
-
-        console.log(
-          `${asset.ticker} já atualizado. ${agora.getTime()}`
-        );
-
-        continue;
-      }
-    }
-
     const data =
       await buscarCotacao(
         asset.ticker
       );
 
+      await prisma.asset.update({
+        where: {
+          id: asset.id,
+        },
+        data: {
+          valorAtual:
+            data.regularMarketPrice,
+
+          ultimaAtualizacao:
+            new Date(),
+        },
+      });
+
+      //console.log(`${asset.ticker} atualizado para ${data.regularMarketPrice}`);
+
     } catch (error) {
 
-      console.error(
-        `Erro atualizando ${asset.ticker}`,
-        error
-      );
+      console.error(`Erro atualizando ${asset.ticker}`,error);
 
     }
   }

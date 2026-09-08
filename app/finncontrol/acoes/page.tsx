@@ -40,7 +40,7 @@ export default async function AcoesPage() {
         </div>
 
         <Link
-          href="/acoes/novo"
+          href="/finncontrol/acoes/novo"
           className="
             rounded-lg
             bg-blue-600

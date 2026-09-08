@@ -35,6 +35,10 @@ const finnControlLinks = [
     label: "Carteira",
   },
   {
+    href: "/finncontrol/rendimentos",
+    label: "Rendimentos",
+  },
+  {
     href: "/finncontrol/ativos",
     label: "Ativos",
   },
@@ -51,7 +55,7 @@ const finnControlLinks = [
     label: "Resumo Mensal",
   },
   {
-    href: "/acoes",
+    href: "/finncontrol/acoes",
     label: "Ações",
   },
 ];

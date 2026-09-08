@@ -123,9 +123,7 @@ export default function AtivosPage() {
     setNome(asset.nome);
     setTipo(asset.tipo);
     setSetor(asset.setor || "");
-    setSegmento(
-      asset.segmento || ""
-    );
+    setSegmento(asset.segmento || "");
     setValorAtual(
       asset.valorAtual
         ? String(asset.valorAtual)
@@ -164,12 +162,13 @@ export default function AtivosPage() {
     );
 
   const nomesTipos: Record<string, string> = {
-    ACAO: "Ações",
-    FII: "Fundos Imobiliários",
-    ETF: "ETFs",
-    CRIPTO: "Criptomoedas",
-    BDR: "BDRs",
-    RENDA_FIXA: "Renda Fixa",
+      ACAO: "Ações",
+      FII: "Fundos Imobiliários",
+      ETF: "ETFs",
+      CRIPTO: "Criptomoedas",
+      FUNDO_INVESTIMENTO: "Fundos Investimento",
+      TESOURO_DIRETO: "Tesouro Direto",
+      PREV_PRIVADA: "Previdência Privada",
   };
 
   function toggleGrupo(tipo: string) {
@@ -329,14 +328,7 @@ export default function AtivosPage() {
                               ? new Date(
                                   asset.ultimaAtualizacao
                                 ).toLocaleString(
-                                  "pt-BR",
-                                  {
-                                    day: "2-digit",
-                                    month: "2-digit",
-                                    year: "numeric",
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                  }
+                                  "pt-BR"
                                 )
                               : "-"}
                           </td>
@@ -486,10 +478,9 @@ export default function AtivosPage() {
                     <option value="FII">FII</option>
                     <option value="CRIPTO">Cripto</option>
                     <option value="ETF">ETF</option>
-                    <option value="BDR">BDR</option>
-                    <option value="RENDA_FIXA">
-                      Renda Fixa
-                    </option>
+                    <option value="FUNDO_INVESTIMENTO">Fundo Investimento</option>
+                    <option value="TESOURO_DIRETO">Tesouro Direto</option>
+                    <option value="PREV_PRIVADA">Previdência Privada</option>
                   </select>
 
                 </div>
@@ -532,26 +523,6 @@ export default function AtivosPage() {
                     </div>
 
                     )}
-
-                    {tipo === "FII" && (
-
-                      <div>
-
-                        <label>
-                          Segmento
-                        </label>
-
-                        <input
-                          value={segmento}
-                          onChange={(e) =>
-                            setSegmento(e.target.value)
-                          }
-                          className="w-full border rounded p-2"
-                        />
-
-                      </div>
-
-                      )}
 
               </div>
 

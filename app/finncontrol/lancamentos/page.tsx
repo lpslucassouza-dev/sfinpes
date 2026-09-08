@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 interface Asset {
   id: string;
   ticker: string;
+  nome: string;
+  tipo: string;
 }
 
 interface Transaction {
@@ -41,6 +43,8 @@ export default function LancamentosPage() {
   const [quantidade, setQuantidade] = useState("");
   const [valorUnitario, setValorUnitario] = useState("");
 
+  const [tipoAtivo, setTipoAtivo] = useState("ACAO");
+
   const total =
     (Number(quantidade) || 0) *
     (Number(valorUnitario) || 0);
@@ -52,7 +56,7 @@ export default function LancamentosPage() {
 
     const data = await response.json();
 
-    console.log(data);
+    //console.log(data);
 
     setTransactions(data);
   }
@@ -148,7 +152,26 @@ export default function LancamentosPage() {
     loadTransactions();
   }
 
-  console.log(transactions);
+  //console.log(transactions);
+
+  const valorTotalCalculado =
+    (Number(quantidade) || 0) *
+    (Number(
+      String(valorUnitario)
+        .replace(",", ".")
+    ) || 0);
+
+  function moeda(valor: number) {
+    return valor.toLocaleString(
+      "pt-BR",
+      {
+        style: "currency",
+        currency: "BRL",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }
+    );
+  }
 
   return (
     <div className="p-8">
@@ -178,6 +201,7 @@ export default function LancamentosPage() {
 
           <thead>
             <tr className="bg-gray-50 border-b">
+              
               <th className="p-3 text-left">
                 Ativo
               </th>
@@ -245,11 +269,12 @@ export default function LancamentosPage() {
                 </td>
 
                 <td className="p-3 text-center">
-                  R$ {tx.valorUnitario}
+                  {moeda(tx.valorUnitario)}
+
                 </td>
 
                 <td className="p-3 text-center">
-                  R$ {tx.valorTotal}
+                  {moeda(tx.valorTotal)}
                 </td>
 
                 <td className="p-3 text-center">
@@ -257,14 +282,12 @@ export default function LancamentosPage() {
                 </td>
 
                 <td className="p-3 text-center">
-                  R$ {tx.posicao.precoMedio}
+                  {moeda(tx.posicao.precoMedio)}
                 </td>
 
                 <td className="p-3 text-center">
-                  {tx.posicao.diferencaPm > 0
-                    ? `+R$ ${tx.posicao.diferencaPm}`
-                    : `R$ ${tx.posicao.diferencaPm}`
-                  }
+                  {tx.posicao.diferencaPm >0 ? "+" : "-"}
+                  {moeda(Math.abs(tx.posicao.diferencaPm))}
                 </td>
 
                 <td className="p-3">
@@ -307,6 +330,29 @@ export default function LancamentosPage() {
 
             <div className="space-y-4">
 
+              <div>
+                <label>Tipo</label>
+
+                <select
+                  value={tipoAtivo}
+                  onChange={(e) =>
+                    setTipoAtivo(
+                      e.target.value
+                    )
+                  }
+                  className="w-full border rounded p-2"
+                >
+                  <option value="ACAO">Ação</option>
+                  <option value="FII">FII</option>
+                  <option value="ETF">ETF</option>
+                  <option value="CRIPTO">Cripto</option>
+                  <option value="FUNDO_INVESTIMENTO">Fundo Investimento</option>
+                  <option value="TESOURO_DIRETO">Tesouro Direto</option>
+                  <option value="PREV_PRIVADA">Previdência Privada</option>
+                </select>
+
+              </div>
+              
               <select
                 value={assetId}
                 onChange={(e) =>
@@ -318,7 +364,12 @@ export default function LancamentosPage() {
                   Selecione o ativo
                 </option>
 
-                {assets.map((asset) => (
+                {assets
+                  .filter(
+                    (asset) =>
+                      asset.tipo === tipoAtivo
+                  )
+                  .map((asset) => (
                   <option
                     key={asset.id}
                     value={asset.id}
@@ -379,9 +430,16 @@ export default function LancamentosPage() {
                 className="w-full border rounded p-2"
               />
 
-              <div className="bg-gray-100 p-3 rounded">
+              <div className="bg-gray-100 p-4 rounded">
                 <strong>
-                  Total: R$ {total.toFixed(2)}
+                  Total:{" "}
+                  {valorTotalCalculado.toLocaleString(
+                    "pt-BR",
+                    {
+                      style: "currency",
+                      currency: "BRL",
+                    }
+                  )}
                 </strong>
               </div>
 

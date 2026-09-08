@@ -16,22 +16,8 @@ export default function CarteiraPage() {
     );
 
 useEffect(() => {
-
-  async function inicializar() {
-
-    await fetch(
-      "/api/cotacoes/atualizar",
-      {
-        method: "POST",
-      }
-    );
-
-    await carregar();
-  }
-
-  inicializar();
-
-}, []);
+    carregar();
+  }, []);
 
   async function carregar() {
 
@@ -67,9 +53,50 @@ useEffect(() => {
     FII: "Fundos Imobiliários",
     ETF: "ETFs",
     CRIPTO: "Criptomoedas",
-    BDR: "BDRs",
-    RENDA_FIXA: "Renda Fixa",
+    FUNDO_INVESTIMENTO: "Fundos de Investimento",
+    TESOURO_DIRETO: "Tesouro Direto",
+    PREV_PRIVADA: "Previdência Privada",
   };
+
+  function moeda(valor: number) {
+    return valor.toLocaleString(
+      "pt-BR",
+      {
+        style: "currency",
+        currency: "BRL",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }
+    );
+  }
+
+  async function atualizarCotacoes() {
+
+    //console.log("BOTAO CLICADO");
+
+    const response =
+      await fetch(
+        "/api/cotacoes/atualizar",
+        {
+          method: "POST",
+        }
+      );
+
+    if (!response.ok) {
+
+      alert(
+        "Erro ao atualizar cotações."
+      );
+
+      return;
+    }
+
+    await carregar();
+
+    alert(
+      "Cotações atualizadas com sucesso."
+    );
+  }
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
@@ -82,19 +109,9 @@ useEffect(() => {
         Patrimônio Consolidado
       </p>
 
+    <div className="flex justify-end">
       <button
-        onClick={async () => {
-
-          await fetch(
-            "/api/cotacoes/atualizar",
-            {
-              method: "POST",
-            }
-          );
-
-          window.location.reload();
-
-        }}
+        onClick={atualizarCotacoes}
         className="
           mb-6
           bg-blue-600
@@ -106,7 +123,7 @@ useEffect(() => {
       >
         Atualizar Cotações
       </button>
-
+    </div>
       <div className="mt-4 mb-8">
 
         <div className="bg-white border rounded-xl p-4 w-fit">
@@ -182,12 +199,7 @@ useEffect(() => {
                 </div>
 
                 <div>
-
-                  R$
-                  {grupo.totalInvestido.toFixed(
-                    2
-                  )}
-
+                  {moeda(grupo.totalInvestido)}
                 </div>
 
               </div>
@@ -222,35 +234,35 @@ useEffect(() => {
                       Ativo
                     </th>
 
-                    <th className="p-3 text-right">
+                    <th className="p-3 text-center">
                       Quantidade
                     </th>
 
-                    <th className="p-3 text-right">
+                    <th className="p-3 text-center">
                       PM
                     </th>
 
-                    <th className="p-3 text-right">
+                    <th className="p-3 text-center">
                       Cotação
                     </th>
 
-                    <th className="p-3 text-right">
+                    <th className="p-3 text-center">
                       Investido
                     </th>
 
-                    <th className="p-3 text-right">
+                    <th className="p-3 text-center">
                       Atual
                     </th>
 
-                    <th className="p-3 text-right">
+                    <th className="p-3 text-center">
                       Resultado
                     </th>
 
-                    <th className="p-3 text-right">
+                    <th className="p-3 text-center">
                       Rentab.
                     </th>
 
-                    <th className="p-3 text-right">
+                    <th className="p-3 text-center">
                       Peso
                     </th>
 
@@ -272,11 +284,11 @@ useEffect(() => {
                         {ativo.ticker}
                       </td>
 
-                      <td className="p-3 text-right">
+                      <td className="p-3 text-center">
                         {ativo.quantidadeAtual}
                       </td>
 
-                      <td className="p-3 text-right">
+                      <td className="p-3 text-center">
 
                         {ativo.precoMedio.toLocaleString(
                           "pt-BR",
@@ -288,7 +300,7 @@ useEffect(() => {
 
                       </td>
 
-                      <td className="p-3 text-right">
+                      <td className="p-3 text-center">
 
                         {ativo.valorAtualCotacao.toLocaleString(
                           "pt-BR",
@@ -300,7 +312,7 @@ useEffect(() => {
 
                       </td>
 
-                      <td className="p-3 text-right">
+                      <td className="p-3 text-center">
 
                         {ativo.valorInvestido.toLocaleString(
                           "pt-BR",
@@ -312,7 +324,7 @@ useEffect(() => {
 
                       </td>
 
-                      <td className="p-3 text-right">
+                      <td className="p-3 text-center">
 
                         {ativo.valorAtual.toLocaleString(
                           "pt-BR",
@@ -325,7 +337,7 @@ useEffect(() => {
                       </td>
 
                       <td
-                        className={`p-3 text-right ${
+                        className={`p-3 text-center ${
                           ativo.resultado >= 0
                             ? "text-green-600"
                             : "text-red-600"
@@ -343,7 +355,7 @@ useEffect(() => {
                       </td>
 
                       <td
-                        className={`p-3 text-right ${
+                        className={`p-3 text-center ${
                           ativo.rentabilidade >= 0
                             ? "text-green-600"
                             : "text-red-600"
@@ -356,7 +368,7 @@ useEffect(() => {
 
                       
 
-                      <td className="p-3 text-right">
+                      <td className="p-3 text-center">
 
                         {(
                           ativo.valorInvestido *

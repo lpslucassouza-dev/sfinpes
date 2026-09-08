@@ -370,7 +370,7 @@ export default function ValuationTable({
                       "
                     >
                       <Link
-                      href={`/acoes/${valuation.id}`}
+                      href={`/finncontrol/acoes/${valuation.id}`}
                         className="
                           rounded-md
                           bg-blue-600

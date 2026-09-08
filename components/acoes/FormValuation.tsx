@@ -245,7 +245,7 @@ async function handleSearchTicker() {
       result.results?.[0];
 
       //console.log("LONG NAME:",stock.longName);
-      console.log(stock);
+      //console.log(stock);
 
 
     if (!stock) {
@@ -294,7 +294,7 @@ async function handleSearchTicker() {
       totalAcoesCalculado
     );
 
-    console.log(result);
+    //console.log(result);
 
   } catch (error) {
 
@@ -330,7 +330,7 @@ async function handleSearchTicker() {
       >
 
       <div className="mb-4">
-        <Link href="/acoes"
+        <Link href="/finncontrol/acoes"
           className="
             rounded-md
             border
