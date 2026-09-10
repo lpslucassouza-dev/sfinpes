@@ -58,6 +58,10 @@ const finnControlLinks = [
     href: "/finncontrol/acoes",
     label: "Ações",
   },
+  {
+    href: "/finncontrol/importacao",
+    label: "Importação",
+  },
 ];
 
 const configuracoesLinks = [
@@ -115,7 +119,7 @@ export default function Sidebar() {
         border-slate-700
       "
     >
-      <div className="p-4 border-b border-slate-700">
+      <div className="p-2 border-b border-slate-700">
         <h1 className="text-xl font-bold">
           SFinPes
         </h1>
@@ -128,7 +132,7 @@ export default function Sidebar() {
         
       </div>
 
-      <nav className="p-3 flex flex-col gap-2">
+      <nav className="p-1 flex flex-col gap-2">
         {links.map((link) => {
 
           const Icon = link.icon;
@@ -139,11 +143,11 @@ export default function Sidebar() {
               href={link.href}
               className={
                   pathname === link.href
-                  ? "text-white px-4 py-3 rounded-lg font-medium"
+                  ? "text-white px-2 py-1 rounded-lg font-medium"
                   : "text-slate-300 hover:bg-slate-800 hover:text-white px-4 py-3 rounded-lg transition"
               }
             >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <Icon size={18} />
               <span>{link.label}</span>
             </div>
@@ -152,7 +156,7 @@ export default function Sidebar() {
         })}
         </nav>
 
-        <div className="px-3">
+        <div className="px-2">
 
             <button
               onClick={() =>
@@ -165,8 +169,7 @@ export default function Sidebar() {
                 flex
                 items-center
                 justify-between
-                px-4
-                py-3
+                px-3
                 rounded-xl
                 transition
 
@@ -178,7 +181,7 @@ export default function Sidebar() {
               `}
             >
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
 
                 <TrendingUp size={18} />
 
@@ -196,12 +199,11 @@ export default function Sidebar() {
 
             {finnControlOpen && (
 
-              <div className="ml-2 mt-2 flex flex-col gap-1">
+              <div className="ml-2 flex flex-col">
 
                 {finnControlLinks.map((link) => {
 
-                  const ativo =
-                    pathname === link.href;
+                  const ativo = pathname === link.href;
 
                   return (
                     <Link
@@ -209,8 +211,8 @@ export default function Sidebar() {
                       href={link.href}
                       className={
                           ativo
-                            ? "flex items-center gap-3 px-3 py-2 ml-6 rounded-lg text-sm transition text-white bg-slate-800"
-                            : "flex items-center gap-3 px-3 py-2 ml-6 rounded-lg text-sm transition text-slate-400 hover:bg-slate-800 hover:text-white"
+                            ? "flex items-center gap-1 px-3 py-1 ml-6 rounded-lg text-sm transition text-white bg-slate-800"
+                            : "flex items-center gap-1 px-3 py-1 ml-6 rounded-lg text-sm transition text-slate-400 hover:bg-slate-800 hover:text-white"
                         }
                     >
                       {link.label}
@@ -233,7 +235,7 @@ export default function Sidebar() {
             items-center
             justify-between
             px-4
-            py-3
+            py-1
             rounded-xl
             transition
 
@@ -256,7 +258,7 @@ export default function Sidebar() {
             </button>
 
             {configOpen && (
-              <div className="ml-6 mt-2 flex flex-col gap-1">
+              <div className="ml-6 flex flex-col">
                 {configuracoesLinks.map((link) => {
                   const Icon = link.icon;
 
@@ -271,8 +273,8 @@ export default function Sidebar() {
                         flex
                         items-center
                         gap-3
-                        px-3
-                        py-2
+                        px-2
+                        py-1
                         ml-6
                         rounded-lg
                         text-xs
