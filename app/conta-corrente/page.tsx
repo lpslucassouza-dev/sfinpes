@@ -7,6 +7,7 @@ import BotaoExcluirLancamento from "@/components/conta-corrente/BotaoExcluirLanc
 import FiltrosContaCorrente from "@/components/conta-corrente/FiltrosContaCorrente";
 import GraficoCategorias from "@/components/conta-corrente/GraficoCategorias";
 import GraficoResumoFinanceiro from "@/components/conta-corrente/GraficoResumoFinanceiro";
+import {copiarLancamento, copiarLancamentoAction, } from "./actions";
 
 export default async function ContaCorrentePage({
   searchParams,
@@ -15,7 +16,8 @@ export default async function ContaCorrentePage({
     mes?: string;
     ano?: string;
   }>;
-}) {
+}) 
+{
 
   const session = await auth();
 
@@ -103,36 +105,36 @@ export default async function ContaCorrentePage({
       ],
     }); 
 
-const todosLancamentos =
-  await prisma.lancamentoContaCorrente.findMany({
-    where: {
-      valorRealizado: {
-        not: 0,
+    const todosLancamentos =
+      await prisma.lancamentoContaCorrente.findMany({
+        where: {
+          valorRealizado: {
+            not: 0,
+          },
+        },
+      });
+        
+  const saldoAtualConta =
+    todosLancamentos.reduce(
+      (acc, item) => {
+
+        const valor =
+          Number(
+            item.valorRealizado
+          );
+
+        if (
+          item.modalidade ===
+          "RECEITA"
+        ) {
+          return acc + valor;
+        }
+
+        return acc - valor;
+
       },
-    },
-  });
-    
-const saldoAtualConta =
-  todosLancamentos.reduce(
-    (acc, item) => {
-
-      const valor =
-        Number(
-          item.valorRealizado
-        );
-
-      if (
-        item.modalidade ===
-        "RECEITA"
-      ) {
-        return acc + valor;
-      }
-
-      return acc - valor;
-
-    },
-    0
-  );
+      0
+    );
 
   const receitas = lancamentos.filter(
     (lancamento) =>
@@ -217,48 +219,48 @@ const saldoAtualConta =
     despesasPlanejadas -
     investimentosPlanejados;
 
-  const saldoAtual =
-    totalReceitas -
-    totalDespesas -
-    totalInvestimentos;
+    const saldoAtual =
+      totalReceitas -
+      totalDespesas -
+      totalInvestimentos;
 
-  const desvio =
-    saldoAtual -
-    saldoPlanejado;  
+    const desvio =
+      saldoAtual -
+      saldoPlanejado;  
 
-  const resultadoMes =
-    totalReceitas -
-    totalDespesas -
-    totalInvestimentos; 
+    const resultadoMes =
+      totalReceitas -
+      totalDespesas -
+      totalInvestimentos; 
 
-  const totalRealizado =
-    totalReceitas -
-    totalDespesas -
-    totalInvestimentos;
+    const totalRealizado =
+      totalReceitas -
+      totalDespesas -
+      totalInvestimentos;
 
-  const resumoCategorias =
-    lancamentos.reduce(
-      (acc, lancamento) => {
+    const resumoCategorias =
+      lancamentos.reduce(
+        (acc, lancamento) => {
 
-        const categoria =
-          lancamento.categoria.nome;
+          const categoria =
+            lancamento.categoria.nome;
 
-        const valor =
-          Number(
-            lancamento.valorRealizado
-          );
+          const valor =
+            Number(
+              lancamento.valorRealizado
+            );
 
-        if (!acc[categoria]) {
-          acc[categoria] = 0;
-        }
+          if (!acc[categoria]) {
+            acc[categoria] = 0;
+          }
 
-        acc[categoria] += valor;
+          acc[categoria] += valor;
 
-        return acc;
+          return acc;
 
-      },
-      {} as Record<string, number>
-    );
+        },
+        {} as Record<string, number>
+      );
 
   const categoriasOrdenadas =
     Object.entries(
@@ -780,6 +782,24 @@ const saldoAtualConta =
                         lancamento={lancamento}
                         categorias={categorias}
                       />
+                      <form
+                        action={copiarLancamentoAction}
+                        method="post"
+                      >
+                        <input
+                          type="hidden"
+                          name="id"
+                          value={lancamento.id}
+                        />
+
+                        <button
+                          type="submit"
+                          className="text-blue-600 hover:text-black-200"
+                          title="Copiar para próximo mês"
+                        >
+                          📄
+                        </button>
+                      </form>
 
                       <BotaoExcluirLancamento
                         id={lancamento.id}

@@ -23,6 +23,7 @@ export async function POST(req: Request) {
       tipo: body.tipo,
       ativo: body.ativo,
       setor: body.setor,
+      goal: body.goal,
       segmento: body.segmento,
       valorAtual: body.valorAtual,
       ultimaAtualizacao: body.ultimaAtualizacao

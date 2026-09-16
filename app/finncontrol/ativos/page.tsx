@@ -9,6 +9,7 @@ interface Asset {
   tipo: string;
   setor?: string;
   segmento?: string;
+  goal?: string;
   valorAtual?: number;
   ultimaAtualizacao?: string;
   ativo: boolean;
@@ -24,8 +25,8 @@ export default function AtivosPage() {
   const [setor, setSetor] = useState("");
   const [segmento, setSegmento] = useState("");
   const [valorAtual, setValorAtual] = useState("");
-  const [gruposAbertos, setGruposAbertos] =
-        useState<Record<string, boolean>>({});
+  const [gruposAbertos, setGruposAbertos] = useState<Record<string, boolean>>({});
+  const [goal, setGoal] = useState("");
 
   async function loadAssets() {
     const response = await fetch("/api/assets");
@@ -503,6 +504,40 @@ export default function AtivosPage() {
                   </div>
 
                   )}
+
+                  {tipo === "ACAO" && (
+                    <div>
+                      <label>
+                        Objetivo
+                      </label>
+
+                      <select
+                        value={goal}
+                        onChange={(e) =>
+                          setGoal(
+                            e.target.value
+                          )
+                        }
+                        className="
+                          w-full
+                          border
+                          rounded-lg
+                          p-2
+                        "
+                      >
+
+                        <option value="PREVIDENCIARIA">
+                          Previdenciária
+                        </option>
+
+                        <option value="VALORIZACAO">
+                          Valorização
+                        </option>
+
+                      </select>
+
+                    </div>
+                    )}
 
                   {tipo === "FII" && (
 

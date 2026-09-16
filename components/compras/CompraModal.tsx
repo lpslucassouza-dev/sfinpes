@@ -58,12 +58,16 @@ usuarios,
 
   const hoje = new Date();
 
+  const dataAtual = hoje.toISOString().split("T")[0];
+
   const competenciaAtual = `${hoje.getFullYear()}-${String(
     hoje.getMonth() + 1
   ).padStart(2, "0")}`;
 
-  const { register, watch, handleSubmit } = useForm<FormData>({
+  const { register, watch, handleSubmit, reset } =
+  useForm<FormData>({
     defaultValues: {
+      dataCompra: dataAtual,
       competencia: competenciaAtual,
       totalParcelas: 1,
     },
@@ -119,7 +123,13 @@ usuarios,
 
       toast.success(
         "Compra cadastrada com sucesso."
-      );  
+      ); 
+      
+      reset({
+        dataCompra: dataAtual,
+        competencia: competenciaAtual,
+        totalParcelas: 1,
+      });
 
       setOpen(false);
     } catch (error) {

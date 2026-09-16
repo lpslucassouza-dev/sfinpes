@@ -2,6 +2,16 @@ import * as XLSX from "xlsx";
 
 import { prisma } from "@/lib/prisma";
 
+function excelDateToJSDate(
+    excelDate: number
+  ) {
+    return new Date(
+      (excelDate - 25569) *
+        86400 *
+        1000
+    );
+  }
+
 export async function POST(
   req: Request
 ) {
@@ -107,8 +117,8 @@ export async function POST(
         : "COMPRA";
 
     const data =
-      new Date(
-        row["DATA"]
+      excelDateToJSDate(
+        Number(row["DATA"])
       );
 
     await prisma.assetTransaction.create({

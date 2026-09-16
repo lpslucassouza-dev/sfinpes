@@ -223,6 +223,8 @@ model Asset {
 
   incomes AssetIncome[]
 
+  goal AssetGoal?
+
   ultimaAtualizacao DateTime?
 
   ativo Boolean @default(true)
@@ -277,4 +279,9 @@ model AssetIncome {
   createdAt DateTime @default(now())
 
   asset Asset @relation(fields: [assetId], references: [id])
+}
+
+enum AssetGoal {
+  PREVIDENCIARIA
+  VALORIZACAO
 }

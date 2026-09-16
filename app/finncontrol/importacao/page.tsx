@@ -158,6 +158,10 @@ export default function ImportacaoPage() {
                     Operação
                   </th>
 
+                  <th className="p-3 text-left">
+                    Data
+                  </th>
+
                   <th className="p-3 text-right">
                     Quantidade
                   </th>
@@ -194,6 +198,10 @@ export default function ImportacaoPage() {
 
                     <td className="p-3">
                       {row.operacao}
+                    </td>
+
+                    <td className="p-3">
+                      {row.data}
                     </td>
 
                     <td className="p-3 text-right">

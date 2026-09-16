@@ -31,8 +31,13 @@ export default function RendimentosPage() {
     const [tipoRendimento, setTipoRendimento] =
     useState("RENDIMENTO");
 
+    const dataAtual =
+        new Date()
+        .toISOString()
+        .split("T")[0];
+
     const [dataRecebimento, setDataRecebimento] =
-    useState("");
+    useState(dataAtual);
 
     const [valorTotal, setValorTotal] =
     useState("");

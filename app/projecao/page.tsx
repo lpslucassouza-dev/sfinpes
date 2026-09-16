@@ -37,7 +37,37 @@ export default async function ProjecaoPage() {
     ],
   });
 
+  const compras = await prisma.compra.findMany();
+
   const mapa = new Map<string, number>();
+  const valoresEncerrando = new Map<string, number>();
+
+  compras.forEach((compra) => {
+
+    const dataFinal =
+      new Date(
+        compra.competenciaAno,
+        compra.competenciaMes - 1 +
+          (compra.totalParcelas - 1),
+        1
+      );
+
+    const chave =
+      `${dataFinal.getFullYear()}-${
+        dataFinal.getMonth() + 1
+      }`;
+
+    const valorParcela =
+      Number(compra.valorTotal) /
+      compra.totalParcelas;
+
+    valoresEncerrando.set(
+      chave,
+      (valoresEncerrando.get(chave) ?? 0) +
+        valorParcela
+    );
+
+  });
 
   parcelas.forEach((parcela) => {
 
@@ -51,6 +81,14 @@ export default async function ProjecaoPage() {
     );
   });
 
+  const hoje = new Date();
+
+  const anoAtual =
+    hoje.getFullYear();
+
+  const mesAtual =
+    hoje.getMonth() + 1;
+
   const projecao =
     Array.from(mapa.entries())
       .map(([chave, valor]) => {
@@ -62,7 +100,26 @@ export default async function ProjecaoPage() {
           ano: Number(ano),
           mes: Number(mes),
           valor,
+          valorEncerrando: valoresEncerrando.get(chave) ?? 0,
         };
+
+
+      })
+      .filter((item) => {
+
+        if (item.ano > anoAtual) {
+          return true;
+        }
+
+        if (
+          item.ano === anoAtual &&
+          item.mes >= mesAtual
+        ) {
+          return true;
+        }
+
+        return false;
+
       });
 
   return (
@@ -106,6 +163,20 @@ export default async function ProjecaoPage() {
               <div className="text-sm text-slate-500">
                 {item.ano}
               </div>
+
+              {item.valorEncerrando > 0 && (
+
+                <div className="text-sm text-emerald-600 font-medium">
+
+                  Redução prevista no mês seguinte:
+                  {" "}
+                  {formatCurrency(
+                    item.valorEncerrando
+                  )}
+
+                </div>
+
+              )}
 
             </div>
 

@@ -114,3 +114,68 @@ export async function excluirLancamento(
 
   revalidatePath("/conta-corrente");
 }
+
+export async function copiarLancamento(
+  id: number
+) {
+
+  const lancamento =
+    await prisma.lancamentoContaCorrente.findUnique({
+      where: {
+        id,
+      },
+    });
+
+  if (!lancamento) {
+    throw new Error(
+      "Lançamento não encontrado"
+    );
+  }
+
+  const novaData =
+    new Date(lancamento.data);
+
+  novaData.setMonth(
+    novaData.getMonth() + 1
+  );
+
+  await prisma.lancamentoContaCorrente.create({
+    data: {
+      data: novaData,
+
+      modalidade:
+        lancamento.modalidade,
+
+      categoriaId:
+        lancamento.categoriaId,
+
+      subCategoriaId:
+        lancamento.subCategoriaId,
+
+      descricao:
+        lancamento.descricao,
+
+      valorPlanejado:
+        lancamento.valorPlanejado,
+
+      valorRealizado:
+        lancamento.valorRealizado,
+    },
+  });
+
+  revalidatePath("/conta-corrente");
+
+  return {
+    sucesso: true,
+  };
+}
+
+export async function copiarLancamentoAction(
+  formData: FormData
+) {
+  const id = Number(
+    formData.get("id")
+  );
+
+  await copiarLancamento(id);
+}

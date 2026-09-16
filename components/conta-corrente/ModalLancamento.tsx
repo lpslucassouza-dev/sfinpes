@@ -1,19 +1,11 @@
 "use client";
 
 import * as Dialog from "@radix-ui/react-dialog";
-
-import {
-  useForm,
-} from "react-hook-form";
-
+import {useForm,} from "react-hook-form";
 import { useState } from "react";
-
 import { toast } from "sonner";
-
 import { X } from "lucide-react";
-
-import { criarLancamento }
-  from "@/app/conta-corrente/actions";
+import { criarLancamento } from "@/app/conta-corrente/actions";
 
 type Props = {
   categorias: {
@@ -34,12 +26,21 @@ export default function ModalLancamento({
   const [open, setOpen] =
     useState(false);
 
+  const dataAtual =
+    new Date()
+      .toISOString()
+      .split("T")[0];
+
   const {
     register,
     handleSubmit,
     watch,
     reset,
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      data: dataAtual,
+    },
+  });
 
   const categoriaId =
     Number(
@@ -75,7 +76,9 @@ export default function ModalLancamento({
         "Lançamento criado."
       );
 
-      reset();
+      reset({
+        data: dataAtual,
+      });
 
       setOpen(false);
 

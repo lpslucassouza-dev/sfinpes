@@ -32,19 +32,19 @@ export default function GastosPorCategoria({
           border-slate-200
           shadow-md
           rounded-2xl
-          p-5
+          p-2
         "
       >
 
-        <h2 className="text-xl font-semibold mb-1">
+        <h2 className="text-xl font-semibold">
           Gastos por Categoria
         </h2>
 
-        <p className="text-slate-500 text-sm mb-6">
+        <p className="text-slate-500 text-sm mb-2">
           Distribuição no período filtrado
         </p>
 
-        <div className="space-y-4">
+        <div className="space-y-2">
 
           {categorias.map(
             (categoria) => {
@@ -62,7 +62,7 @@ export default function GastosPorCategoria({
                   key={categoria.nome}
                 >
 
-                  <div className="flex justify-between mb-1 text-sm">
+                  <div className="flex justify-between text-sm border-t">
 
                     <span>
                       {categoria.nome}
@@ -70,9 +70,7 @@ export default function GastosPorCategoria({
 
                     <div className="text-right">
                       <div>
-                        {formatCurrency(
-                          categoria.valor
-                        )}
+                        {formatCurrency(categoria.valor)}
                       </div>
 
                       <div className="text-xs text-slate-500">
@@ -92,9 +90,7 @@ export default function GastosPorCategoria({
                         to-blue-400
                         rounded-full
                       "
-                      style={{
-                        width: `${percentual}%`,
-                      }}
+                      style={{width: `${percentual}%`,}}
                     />
 
                   </div>

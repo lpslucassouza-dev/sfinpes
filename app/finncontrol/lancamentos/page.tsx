@@ -39,7 +39,12 @@ export default function LancamentosPage() {
   const [tipoOperacao, setTipoOperacao] =
     useState<"COMPRA" | "VENDA">("COMPRA");
 
-  const [dataOperacao, setDataOperacao] = useState("");
+  const dataAtual =
+    new Date()
+      .toISOString()
+      .split("T")[0];  
+
+  const [dataOperacao, setDataOperacao] = useState(dataAtual);
   const [quantidade, setQuantidade] = useState("");
   const [valorUnitario, setValorUnitario] = useState("");
 
@@ -328,17 +333,77 @@ export default function LancamentosPage() {
                 : "Novo Lançamento"}
             </h2>
 
-            <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-2 mb-6">
+
+              <button
+                type="button"
+                onClick={() =>
+                  setTipoOperacao("COMPRA")
+                }
+                className={`
+                  py-3
+                  rounded-xl
+                  border
+                  font-medium
+                  transition
+
+                  ${
+                    tipoOperacao === "COMPRA"
+                      ? "bg-white border-emerald-500 shadow"
+                      : "bg-slate-100"
+                  }
+                `}
+              >
+                Compra
+              </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setTipoOperacao("VENDA")
+                }
+                className={`
+                  py-3
+                  rounded-xl
+                  border
+                  font-medium
+                  transition
+
+                  ${
+                    tipoOperacao === "VENDA"
+                      ? "bg-white border-red-500 shadow"
+                      : "bg-slate-100"
+                  }
+                `}
+              >
+                Venda
+              </button>
+
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+
+              {/* Tipo Ativo */}
 
               <div>
-                <label>Tipo</label>
+
+                <label
+                  className="
+                    block
+                    mb-1
+                    text-sm
+                    font-medium
+                  "
+                >
+                  Tipo de Ativo
+                </label>
 
                 <select
                   value={tipoAtivo}
                   onChange={(e) =>
-                    setTipoAtivo(
-                      e.target.value
-                    )
+                  setTipoAtivo(
+                    e.target.value
+                  )
                   }
                   className="w-full border rounded p-2"
                 >
@@ -350,118 +415,235 @@ export default function LancamentosPage() {
                   <option value="TESOURO_DIRETO">Tesouro Direto</option>
                   <option value="PREV_PRIVADA">Previdência Privada</option>
                 </select>
-
               </div>
-              
-              <select
-                value={assetId}
-                onChange={(e) =>
-                  setAssetId(e.target.value)
-                }
-                className="w-full border rounded p-2"
-              >
-                <option value="">
-                  Selecione o ativo
-                </option>
 
-                {assets
-                  .filter(
+              {/* Ativo */}
+
+              <div>
+
+                <label
+                  className="
+                    block
+                    mb-1
+                    text-sm
+                    font-medium
+                  "
+                >
+                  Ativo
+                </label>
+
+                <select
+                  value={assetId}
+                  onChange={(e) =>
+                    setAssetId(e.target.value)
+                  }
+                  className="w-full border rounded p-2"
+                  >
+                  <option value="">
+                    Selecione o ativo
+                  </option>
+
+                  {assets
+                    .filter(
                     (asset) =>
                       asset.tipo === tipoAtivo
-                  )
-                  .map((asset) => (
-                  <option
+                    )
+                    .map((asset) => (
+                    <option
                     key={asset.id}
                     value={asset.id}
-                  >
+                    >
                     {asset.ticker}
-                  </option>
-                ))}
-              </select>
+                    </option>
+                  ))}
+                  </select>
+              </div>
 
-              <select
-                value={tipoOperacao}
-                onChange={(e) =>
-                  setTipoOperacao(
-                    e.target.value as any
-                  )
-                }
-                className="w-full border rounded p-2"
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4 mt-4">
+
+                {/* Data */}
+
+                <div>
+
+                  <label
+                    className="
+                      block
+                      mb-1
+                      text-sm
+                      font-medium
+                    "
+                  >
+                    Data
+                  </label>
+
+                  <input
+                    type="date"
+                    value={dataOperacao}
+                    onChange={(e) =>
+                      setDataOperacao(
+                      e.target.value
+                      )
+                    }
+                    className="
+                        w-full
+                        border
+                        border-slate-300
+                        rounded-xl
+                        p-3
+                        text-lg
+                        focus:ring-2
+                        focus:ring-blue-500
+                      "
+                    />
+                </div>
+
+            </div>
+
+           <div className="grid md:grid-cols-2 gap-4 mt-4">
+          
+              {/* Quantidade */}
+
+               {/* Quantidade */}
+
+                <div>
+
+                  <label
+                    className="
+                      block
+                      mb-1
+                      text-sm
+                      font-medium
+                    "
+                  >
+                    Quantidade
+                  </label>
+
+                  <input
+                    placeholder="Quantidade"
+                    value={quantidade}
+                    onChange={(e) =>
+                      setQuantidade(
+                      e.target.value
+                      )
+                    }
+                    className="
+                        w-full
+                        border
+                        border-slate-300
+                        rounded-xl
+                        p-3
+                        text-lg
+                        focus:ring-2
+                        focus:ring-blue-500
+                      "
+                    />
+                </div>
+                
+              <div>
+
+              <label
+                className="
+                  block
+                  mb-1
+                  text-sm
+                  font-medium
+                "
               >
-                <option value="COMPRA">
-                  COMPRA
-                </option>
-
-                <option value="VENDA">
-                  VENDA
-                </option>
-              </select>
-
-              <input
-                type="date"
-                value={dataOperacao}
-                onChange={(e) =>
-                  setDataOperacao(
-                    e.target.value
-                  )
-                }
-                className="w-full border rounded p-2"
-              />
-
-              <input
-                placeholder="Quantidade"
-                value={quantidade}
-                onChange={(e) =>
-                  setQuantidade(
-                    e.target.value
-                  )
-                }
-                className="w-full border rounded p-2"
-              />
+                Valor Unitário
+              </label>
 
               <input
                 placeholder="Valor Unitário"
                 value={valorUnitario}
                 onChange={(e) =>
                   setValorUnitario(
-                    e.target.value
+                  e.target.value
                   )
                 }
-                className="w-full border rounded p-2"
-              />
+                className="
+                    w-full
+                    border
+                    border-slate-300
+                    rounded-xl
+                    p-3
+                    text-lg
+                    focus:ring-2
+                    focus:ring-blue-500
+                  "
+                />
+                </div>
+          </div> 
 
-              <div className="bg-gray-100 p-4 rounded">
-                <strong>
-                  Total:{" "}
-                  {valorTotalCalculado.toLocaleString(
-                    "pt-BR",
-                    {
-                      style: "currency",
-                      currency: "BRL",
-                    }
-                  )}
-                </strong>
-              </div>
+          <div
+            className="
+              mt-6
+              rounded-xl
+              bg-slate-100
+              p-4
+              flex
+              justify-between
+              items-center
+            "
+          >
 
-            </div>
+            <span
+              className="
+                font-semibold
+                text-lg
+              "
+            >
+              Valor Total
+            </span>
 
-            <div className="flex justify-end gap-2 mt-6">
+            <span
+              className="
+                text-2xl
+                font-bold
+              "
+            >
+              {moeda(valorTotalCalculado)}
+            </span>
 
-              <button
-                onClick={resetForm}
-                className="border px-4 py-2 rounded"
-              >
-                Cancelar
-              </button>
+          </div>
 
-              <button
-                onClick={salvar}
-                className="bg-black text-white px-4 py-2 rounded"
-              >
-                Salvar
-              </button>
+          <div
+            className="
+              mt-6
+              flex
+              justify-end
+              gap-3
+            "
+          >
 
-            </div>
+            <button
+              type="button"
+              onClick={resetForm}
+              className="
+                px-4
+                py-2
+                border
+                rounded-xl
+              "
+            >
+              Cancelar
+            </button>
+
+            <button
+              onClick={salvar}
+              className="
+                px-5
+                py-2
+                rounded-xl
+                bg-slate-900
+                text-white
+              "
+            >
+              Salvar
+            </button>
+
+          </div>
 
           </div>
 
