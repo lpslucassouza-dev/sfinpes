@@ -19,6 +19,16 @@ type Props = {
   }[];
 };
 
+type FormData = {
+  data: string;
+  modalidade: string;
+  categoriaId: string;
+  subCategoriaId: string;
+  descricao: string;
+  valorPlanejado: string;
+  valorRealizado: string;
+};
+
 export default function ModalLancamento({
   categorias,
 }: Props) {
@@ -36,7 +46,7 @@ export default function ModalLancamento({
     handleSubmit,
     watch,
     reset,
-  } = useForm({
+  } = useForm<FormData>({
     defaultValues: {
       data: dataAtual,
     },
