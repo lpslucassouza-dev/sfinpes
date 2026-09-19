@@ -1,7 +1,6 @@
 "use client";
 
 import * as Dialog from "@radix-ui/react-dialog";
-import { Decimal } from "@prisma/client/runtime/library";
 
 type Parcela = {
   id: number;
@@ -9,7 +8,8 @@ type Parcela = {
   totalParcelas: number;
   competenciaMes: number;
   competenciaAno: number;
-  valorParcela: Decimal;
+  valorParcela: number;
+  cashback?: number;
 };
 
 type Props = {

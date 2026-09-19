@@ -1,4 +1,12 @@
 "use client";
+import {
+  TrendingUp,
+  Building2,
+  Bitcoin,
+  Landmark,
+  Shield,
+  Folder
+} from "lucide-react";
 
 import {
   useEffect,
@@ -98,6 +106,70 @@ useEffect(() => {
     );
   }
 
+  function getIconeGrupo(tipo: string) {
+
+  switch (tipo) {
+
+    case "ACAO":
+      return (
+        <TrendingUp
+          size={24}
+          className="text-blue-600"
+        />
+      );
+
+    case "FII":
+      return (
+        <Building2
+          size={24}
+          className="text-emerald-600"
+        />
+      );
+
+    case "ETF":
+      return (
+        <TrendingUp
+          size={24}
+          className="text-violet-600"
+        />
+      );
+
+    case "CRIPTO":
+      return (
+        <Bitcoin
+          size={24}
+          className="text-amber-500"
+        />
+      );
+
+    case "TESOURO_DIRETO":
+      return (
+        <Landmark
+          size={24}
+          className="text-green-700"
+        />
+      );
+
+    case "PREV_PRIVADA":
+      return (
+        <Shield
+          size={24}
+          className="text-sky-600"
+        />
+      );
+
+    default:
+      return (
+        <Folder
+          size={24}
+          className="text-slate-500"
+        />
+      );
+
+  }
+
+}
+
   return (
     <div className="p-8 max-w-7xl mx-auto">
 
@@ -126,13 +198,13 @@ useEffect(() => {
     </div>
       <div className="mt-4 mb-8">
 
-        <div className="bg-white border rounded-xl p-4 w-fit">
+        <div className="bg-white border rounded-2xl p-6 shadow-sm w-72">
 
           <p className="text-sm text-gray-500">
             Patrimônio Total
           </p>
 
-          <h2 className="text-2xl font-bold">
+          <h2 className="text-4xl font-bold">
 
             {dados.patrimonioTotal.toLocaleString(
               "pt-BR",
@@ -148,74 +220,208 @@ useEffect(() => {
 
       </div>
 
-      {dados.grupos.map(
-        (grupo: any) => (
+      {[...dados.grupos]
+        .sort((a, b) =>
+          (nomesTipos[a.tipo] || a.tipo)
+            .localeCompare(
+              nomesTipos[b.tipo] || b.tipo,
+              "pt-BR"
+            )
+        )
+        .map(
+        (grupo: any) => {
 
+          const valorAtualGrupo =
+            grupo.ativos.reduce(
+              (acc: number, ativo: any) =>
+                acc + ativo.valorAtual,
+              0
+            );
+
+          const lucroGrupo =
+            valorAtualGrupo -
+            grupo.totalInvestido;
+
+          const variacaoGrupo =
+            grupo.totalInvestido > 0
+              ? (
+                  (
+                    valorAtualGrupo -
+                    grupo.totalInvestido
+                  ) /
+                  grupo.totalInvestido
+                ) * 100
+              : 0;
+      
+      return (
+          
         <div
           key={grupo.tipo}
-          className="border rounded-xl mb-4 bg-white"
+          className="
+            border
+            border-slate-200
+            rounded-2xl
+            mb-4
+            bg-white
+            shadow-sm
+          "
         >
 
           <button
             onClick={() =>
               toggle(grupo.tipo)
             }
-            className="w-full p-4 flex justify-between"
+            className="
+              w-full
+              px-6
+              py-5
+              flex
+              items-center
+              justify-between
+              hover:bg-slate-50
+              transition
+            "
           >
 
-            <div>
+            {/* Lado Esquerdo */}
 
-             <div className="flex items-center gap-3">
-                <span className="text-lg">
-                    {abertos[grupo.tipo] ? "▼" : "▶"}
-                </span>
+            <div className="flex items-center gap-4 w-[320px]">
 
-                <h2 className="font-bold text-xl">
-                    {nomesTipos[grupo.tipo] || grupo.tipo}
-                </h2>
+              <div
+                className="
+                  h-12
+                  w-12
+                  rounded-full
+                  bg-slate-100
+                  flex
+                  items-center
+                  justify-center
+                "
+              >
+                {getIconeGrupo(grupo.tipo)}
+              </div>
 
-             </div>
-
-            </div>
-
-            <div className="flex gap-8">
 
               <div>
 
-                <div className="text-xs text-gray-500">
+                <h2 className="font-bold text-xl text-left">
+                  {nomesTipos[grupo.tipo] || grupo.tipo}
+                </h2>
+
+              </div>
+
+            </div>
+
+            {/* Indicadores */}
+
+            <div
+              className="
+                grid
+                grid-cols-[120px_130px_130px_130px_130px_30px]
+                items-right
+                text-right
+                gap-4
+              "
+            >
+
+              <div className="w-[120px]">
+
+                <div className="text-xs text-slate-500">
                   Ativos
                 </div>
 
-                <div>
+                <div className="font-semibold text-lg">
                   {grupo.quantidadeAtivos}
                 </div>
 
               </div>
 
-              <div>
+              <div className="w-[150px]">
 
-                <div className="text-xs text-gray-500">
-                  Valor
+                  <div className="text-xs text-slate-500">
+                  Valor Atual
+                  </div>
+
+                  <div className="font-semibold text-lg">
+                    {moeda(valorAtualGrupo)}
+                  </div>
+
+              </div>
+
+              <div className="w-[150px]">
+
+                <div className="text-xs text-slate-500">
+                  Variação
                 </div>
 
-                <div>
-                  {moeda(grupo.totalInvestido)}
+                <div
+                  className={
+                    variacaoGrupo >= 0
+                      ? "font-semibold text-emerald-600"
+                      : "font-semibold text-red-600"
+                  }
+                >
+                 {
+                    variacaoGrupo >= 0
+                      ? `▲ ${variacaoGrupo.toFixed(2)}%`
+                      : `▼ ${variacaoGrupo.toFixed(2)}%`
+                  }
                 </div>
 
               </div>
 
-              <div>
+              <div className="w-[150px]">
 
-                <div className="text-xs text-gray-500">
-                  Peso
+                <div className="text-xs text-slate-500">
+                  Lucro/Prejuízo
                 </div>
 
-                <div>
+                <div
+                  className={
+                    lucroGrupo >= 0
+                      ? "font-semibold text-emerald-600"
+                      : "font-semibold text-red-600"
+                  }
+                >
+                  {
+                    lucroGrupo >= 0
+                      ? `▲ ${moeda(lucroGrupo)}`
+                      : `▼ ${moeda(lucroGrupo)}`
+                  }
+
+                </div>
+
+              </div>
+
+              <div className="w-[100px]">
+
+                <div className="text-xs text-slate-500">
+                  % Carteira
+                </div>
+
+                <div className="font-semibold text-lg">
                   {grupo.peso.toFixed(2)}%
                 </div>
 
               </div>
 
+              <div
+                className="
+                  h-10
+                  w-10
+                  rounded-full
+                  bg-slate-100
+                  flex
+                  items-center
+                  justify-center
+                "
+              >
+                {abertos[grupo.tipo]
+                  ? "▼"
+                  : "▶"
+                }
+              </div>
+            
             </div>
 
           </button>
@@ -393,7 +599,9 @@ useEffect(() => {
 
         </div>
 
-      ))}
+      );
+    
+    })}
 
     </div>
   );

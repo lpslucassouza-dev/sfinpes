@@ -39,18 +39,13 @@ export async function GET() {
       continue;
     }
 
-    patrimonioTotal +=
-      posicao.valorInvestido;
-
     if (!grupos[asset.tipo]) {
 
       grupos[asset.tipo] = {
-
         tipo: asset.tipo,
-
         ativos: [],
-
         totalInvestido: 0,
+        totalAtual: 0,
       };
     }
 
@@ -90,6 +85,12 @@ export async function GET() {
     grupos[asset.tipo]
       .totalInvestido +=
         posicao.valorInvestido;
+
+    grupos[asset.tipo].totalAtual += 
+      valorAtual;
+
+    patrimonioTotal +=
+      valorAtual;
   }
 
   const resultado =
@@ -104,7 +105,7 @@ export async function GET() {
         peso:
           patrimonioTotal > 0
             ? (
-                grupo.totalInvestido *
+                grupo.totalAtual *
                 100
               ) /
               patrimonioTotal

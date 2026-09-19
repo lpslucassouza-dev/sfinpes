@@ -3,8 +3,8 @@
 import { prisma } from "@/lib/prisma";
 import { compraSchema, CompraFormData, } from "@/lib/validations/compra";
 import { revalidatePath } from "next/cache";
-revalidatePath("/compras");
 import { calcularStatusParcela } from "@/lib/parcelas";
+import {atualizarFaturasCartao} from "@/services/fatura-cartao.service";
 
 export async function criarCompra(
   data: CompraFormData
@@ -16,135 +16,143 @@ export async function criarCompra(
       .split("-")
       .map(Number);
 
-  return await prisma.$transaction(
+  const compra = await prisma.$transaction(
     async (tx) => {
 
-      const cartao =
-        await tx.cartao.findUnique({
-          where: {
-            id: Number(
-              dados.cartaoId
-            ),
-          },
-        });
-
-      if (!cartao) {
-        throw new Error(
-          "Cartão não encontrado."
-        );
-      }
-
-      const compra =
-        await tx.compra.create({
-          data: {
-            dataCompra: new Date(
-              dados.dataCompra
-            ),
-
-            competenciaMes:
-              mesInicial,
-
-            competenciaAno:
-              anoInicial,
-
-            descricao:
-              dados.descricao,
-
-            valorTotal:
-              dados.valorTotal,
-
-            totalParcelas:
-              dados.totalParcelas,
-
-            cartaoId:
-              Number(
+        const cartao =
+          await tx.cartao.findUnique({
+            where: {
+              id: Number(
                 dados.cartaoId
               ),
+            },
+          });
 
-            usuarioId:
-              Number(
-                dados.usuarioId
+        if (!cartao) {
+          throw new Error(
+            "Cartão não encontrado."
+          );
+        }
+
+        const compra =
+          await tx.compra.create({
+            data: {
+              dataCompra: new Date(
+                dados.dataCompra
               ),
 
-            categoriaId:
-              Number(
-                dados.categoriaId
-              ),
+              competenciaMes:
+                mesInicial,
 
-            subCategoriaId:
-              dados.subCategoriaId
-                ? Number(
-                    dados.subCategoriaId
-                  )
-                : null,
-          },
-        });
+              competenciaAno:
+                anoInicial,
 
-      const valorParcela =
-        Number(
-          dados.valorTotal
-        ) /
-        Number(
-          dados.totalParcelas
-        );
+              descricao:
+                dados.descricao,
 
-      const cashbackPercent =
-        Number(
-          cartao.cashbackPercent
-        );
+              valorTotal:
+                dados.valorTotal,
 
-      for (
-        let i = 0;
-        i < dados.totalParcelas;
-        i++
-      ) {
+              totalParcelas:
+                dados.totalParcelas,
 
-        const dataCompetencia =
-          new Date(
-            anoInicial,
-            mesInicial - 1 + i,
-            1
+              cartaoId:
+                Number(
+                  dados.cartaoId
+                ),
+
+              usuarioId:
+                Number(
+                  dados.usuarioId
+                ),
+
+              categoriaId:
+                Number(
+                  dados.categoriaId
+                ),
+
+              subCategoriaId:
+                dados.subCategoriaId
+                  ? Number(
+                      dados.subCategoriaId
+                    )
+                  : null,
+            },
+          });
+
+        const valorParcela =
+          Number(
+            dados.valorTotal
+          ) /
+          Number(
+            dados.totalParcelas
           );
 
-        const cashback =
-          (
-            valorParcela *
-            cashbackPercent
-          ) / 100;
+        const cashbackPercent =
+          Number(
+            cartao.cashbackPercent
+          );
 
-        await tx.parcela.create({
-          data: {
-            compraId:
-              compra.id,
+        for (
+          let i = 0;
+          i < dados.totalParcelas;
+          i++
+        ) {
 
-            numeroParcela:
-              i + 1,
+          const dataCompetencia =
+            new Date(
+              anoInicial,
+              mesInicial - 1 + i,
+              1
+            );
 
-            totalParcelas:
-              dados.totalParcelas,
+          const cashback =
+            (
+              valorParcela *
+              cashbackPercent
+            ) / 100;
 
-            competenciaMes:
-              dataCompetencia.getMonth() + 1,
+          await tx.parcela.create({
+            data: {
+              compraId:
+                compra.id,
 
-            competenciaAno:
-              dataCompetencia.getFullYear(),
-
-            valorParcela,
-
-            cashback,
-
-            statusParcela:
-              calcularStatusParcela(
+              numeroParcela:
                 i + 1,
-                dados.totalParcelas
-              ),
-          },
-        });
+
+              totalParcelas:
+                dados.totalParcelas,
+
+              competenciaMes:
+                dataCompetencia.getMonth() + 1,
+
+              competenciaAno:
+                dataCompetencia.getFullYear(),
+
+              valorParcela,
+
+              cashback,
+
+              statusParcela:
+                calcularStatusParcela(
+                  i + 1,
+                  dados.totalParcelas
+                ),
+            },
+          });
+        }
+
+        return {
+          success: true,
+        };
       }
-      revalidatePath("/compras");
-      return compra;
-    }
   );
+
+  await atualizarFaturasCartao();
+
+  revalidatePath("/compras");
+
+  return compra;
 }
 
 export async function excluirCompra(
@@ -155,6 +163,10 @@ export async function excluirCompra(
       id: compraId,
     },
   });
+
+  //console.log(`Compra deletada`);
+
+  await atualizarFaturasCartao();
 
   revalidatePath("/compras");
 

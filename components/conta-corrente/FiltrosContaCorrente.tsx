@@ -7,7 +7,7 @@ type Props = {
   ano: number;
 };
 
-export default async function FiltrosContaCorrente({
+export default function FiltrosContaCorrente({
   mes,
   ano,
 }: Props) {

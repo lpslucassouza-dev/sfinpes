@@ -27,7 +27,7 @@ export default function CardsCartao({
         {cartoes.map((cartao) => (
 
           <div
-            //key={cartao.id}
+            key={cartao.id}
             className="
               bg-white
               border

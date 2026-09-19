@@ -72,14 +72,25 @@ export default async function ComprasPage({
     },
   });
 
-  const cartoes = await prisma.cartao.findMany({
-    where: {
-      ativo: true,
-    },
-    orderBy: {
-      nome: "asc",
-    },
-  });
+  const cartoesRaw =
+    await prisma.cartao.findMany({
+      where: {
+        ativo: true,
+      },
+      orderBy: {
+        nome: "asc",
+      },
+    });
+
+  const cartoes =
+    cartoesRaw.map((cartao) => ({
+      ...cartao,
+
+      cashbackPercent:
+        Number(
+          cartao.cashbackPercent
+        ),
+    }));
 
   const categorias = await prisma.categoria.findMany({
     where: {
@@ -138,19 +149,110 @@ export default async function ComprasPage({
   },
 });
 
-const totalMes = compras.reduce(
+const comprasSeguras =
+    compras.map((parcela) => ({
+
+      ...parcela,
+
+      valorParcela:
+        Number(parcela.valorParcela),
+
+      cashback:
+        Number(parcela.cashback),
+
+      compra: {
+
+        ...parcela.compra,
+
+        valorTotal:
+          Number(
+            parcela.compra.valorTotal
+          ),
+
+        parcelas:
+          parcela.compra.parcelas.map(
+            (p) => ({
+
+              ...p,
+
+              valorParcela:
+                Number(
+                  p.valorParcela
+                ),
+
+              cashback:
+                Number(
+                  p.cashback
+                ),
+
+            })
+          ),
+
+      },
+
+    }));
+
+const comprasFormatadas =
+  comprasSeguras.map((parcela) => ({
+
+    ...parcela,
+
+    valorParcela:
+      Number(
+        parcela.valorParcela
+      ),
+
+    cashback:
+      Number(
+        parcela.cashback
+      ),
+
+    compra: {
+
+      ...parcela.compra,
+
+      valorTotal:
+        Number(
+          parcela.compra.valorTotal
+        ),
+
+      parcelas:
+        parcela.compra.parcelas.map(
+          (p) => ({
+
+            ...p,
+
+            valorParcela:
+              Number(
+                p.valorParcela
+              ),
+
+            cashback:
+              Number(
+                p.cashback
+              ),
+
+          })
+        ),
+
+    },
+
+  }));
+
+const totalMes = comprasFormatadas.reduce(
   (acc, item) =>
     acc + Number(item.valorParcela),
   0
 );
 
-const cashbackMes = compras.reduce(
+const cashbackMes = comprasFormatadas.reduce(
+  
   (acc, item) =>
     acc + Number(item.cashback),
   0
 );
 
-const iniciando = compras
+const iniciando = comprasFormatadas
   .filter(
     (item) =>
       item.statusParcela === "INICIO"
@@ -161,7 +263,7 @@ const iniciando = compras
     0
   );
 
-const encerrando = compras
+const encerrando = comprasFormatadas
   .filter(
     (item) =>
       item.statusParcela === "FIM"
@@ -174,7 +276,7 @@ const encerrando = compras
 
   const totalPorCartao = cartoes.map((cartaoItem) => {
 
-    const parcelasCartao = compras.filter(
+    const parcelasCartao = comprasFormatadas.filter(
       (parcela) =>
         parcela.compra.cartaoId ===
         cartaoItem.id
@@ -415,7 +517,7 @@ const encerrando = compras
               </tr>
             )}
 
-            {compras.map((parcela) => (
+            {comprasFormatadas.map((parcela) => (
               <tr
                 key={parcela.id}
                 className="
@@ -502,12 +604,8 @@ const encerrando = compras
                     />
 
                     <ModalParcelas
-                      descricao={
-                        parcela.compra.descricao
-                      }
-                      parcelas={
-                        parcela.compra.parcelas
-                      }
+                      descricao={parcela.compra.descricao}
+                      parcelas={parcela.compra.parcelas}
                     />
 
                     <ModalExcluirCompra

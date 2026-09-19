@@ -105,6 +105,19 @@ export default async function ContaCorrentePage({
       ],
     }); 
 
+    const lancamentosFormatados =
+      lancamentos.map((lancamento) => ({
+
+        ...lancamento,
+
+        valorPlanejado:
+          Number(lancamento.valorPlanejado),
+
+        valorRealizado:
+          Number(lancamento.valorRealizado),
+
+      }));
+
     const todosLancamentos =
       await prisma.lancamentoContaCorrente.findMany({
         where: {
@@ -136,17 +149,17 @@ export default async function ContaCorrentePage({
       0
     );
 
-  const receitas = lancamentos.filter(
+  const receitas = lancamentosFormatados.filter(
     (lancamento) =>
       lancamento.modalidade === "RECEITA"
   );
 
-  const despesas = lancamentos.filter(
+  const despesas = lancamentosFormatados.filter(
     (lancamento) =>
       lancamento.modalidade === "DESPESA"
   );
 
-  const investimentos = lancamentos.filter(
+  const investimentos = lancamentosFormatados.filter(
     (lancamento) =>
       lancamento.modalidade === "INVESTIMENTO"
   );
@@ -239,7 +252,7 @@ export default async function ContaCorrentePage({
       totalInvestimentos;
 
     const resumoCategorias =
-      lancamentos.reduce(
+      lancamentosFormatados.reduce(
         (acc, lancamento) => {
 
           const categoria =
@@ -386,7 +399,7 @@ export default async function ContaCorrentePage({
                 shadow-lg
               "
             >
-              <div text-left>
+              <div className="text-left">
                 Receitas Realizadas
               </div>
 
@@ -417,7 +430,7 @@ export default async function ContaCorrentePage({
               shadow-lg
             "
           >
-            <div text-left>
+            <div className="text-left">
               Despesas Realizadas
             </div>
 
@@ -441,7 +454,7 @@ export default async function ContaCorrentePage({
               shadow-lg
             "
           >
-            <div text-left>
+            <div className="text-left">
               Investimentos Realizados
             </div>
 
@@ -469,7 +482,7 @@ export default async function ContaCorrentePage({
             }
           `}
         >
-          <div text-left>
+          <div className="text-left">
             Saldo Planejado
           </div>
 
@@ -497,7 +510,7 @@ export default async function ContaCorrentePage({
               }
             `}
           >
-            <div text-left>
+            <div className="text-left">
               Resultado do Mês
             </div>
 
@@ -525,7 +538,7 @@ export default async function ContaCorrentePage({
             }
           `}
         >
-          <div text-left>
+          <div className="text-left">
             Saldo Atual da Conta
           </div>
 
@@ -674,7 +687,7 @@ export default async function ContaCorrentePage({
 
           <tbody>
 
-            {lancamentos.map(
+            {lancamentosFormatados.map(
               (lancamento, index) => (
                 <tr
                   key={lancamento.id}
@@ -784,7 +797,6 @@ export default async function ContaCorrentePage({
                       />
                       <form
                         action={copiarLancamentoAction}
-                        method="post"
                       >
                         <input
                           type="hidden"
