@@ -82,6 +82,19 @@ export async function atualizarFaturasCartao() {
         10
       );
 
+      const hoje = new Date();
+
+      const inicioMesSeguinte =
+        new Date(
+          hoje.getFullYear(),
+          hoje.getMonth() + 1,
+          1
+        );
+
+      if (data < inicioMesSeguinte) {
+        continue;
+      }
+
     const subCategoria =
       await prisma.subCategoria.findFirst({
         where: {

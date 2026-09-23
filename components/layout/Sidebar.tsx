@@ -59,6 +59,10 @@ const finnControlLinks = [
     label: "Ações",
   },
   {
+    label: "Atualização Manual",
+    href: "/finncontrol/atualizacao-manual",
+  },
+  {
     href: "/finncontrol/importacao",
     label: "Importação",
   },
@@ -132,7 +136,7 @@ export default function Sidebar() {
         
       </div>
 
-      <nav className="p-1 flex flex-col gap-2">
+      <nav className="p-1 flex flex-col gap-1">
         {links.map((link) => {
 
           const Icon = link.icon;
@@ -144,7 +148,7 @@ export default function Sidebar() {
               className={
                   pathname === link.href
                   ? "text-white px-2 py-1 rounded-lg font-medium"
-                  : "text-slate-300 hover:bg-slate-800 hover:text-white px-4 py-3 rounded-lg transition"
+                  : "text-slate-300 hover:bg-slate-800 hover:text-white px-3 py-0.5 rounded-lg transition"
               }
             >
             <div className="flex items-center gap-2">
@@ -170,6 +174,7 @@ export default function Sidebar() {
                 items-center
                 justify-between
                 px-3
+                py-1  
                 rounded-xl
                 transition
 
@@ -211,7 +216,7 @@ export default function Sidebar() {
                       href={link.href}
                       className={
                           ativo
-                            ? "flex items-center gap-1 px-3 py-1 ml-6 rounded-lg text-sm transition text-white bg-slate-800"
+                            ? "flex items-center gap-1 px-3 py-1 ml-4 rounded-lg text-sm transition text-white bg-slate-800"
                             : "flex items-center gap-1 px-3 py-1 ml-6 rounded-lg text-sm transition text-slate-400 hover:bg-slate-800 hover:text-white"
                         }
                     >

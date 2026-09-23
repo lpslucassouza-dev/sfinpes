@@ -225,6 +225,10 @@ model Asset {
 
   goal AssetGoal?
 
+  valorAtualManual Float?
+
+  dataAtualizacaoManual DateTime?
+
   ultimaAtualizacao DateTime?
 
   ativo Boolean @default(true)

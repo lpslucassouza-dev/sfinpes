@@ -23,6 +23,12 @@ export default function CarteiraPage() {
       {}
     );
 
+  const [campoOrdenacao, setCampoOrdenacao] =
+    useState("ticker");
+
+  const [direcaoOrdenacao, setDirecaoOrdenacao] =
+    useState<"asc" | "desc">("asc");
+
 useEffect(() => {
     carregar();
   }, []);
@@ -66,17 +72,18 @@ useEffect(() => {
     PREV_PRIVADA: "Previdência Privada",
   };
 
-  function moeda(valor: number) {
+  function valor(valor: number) {
+
     return valor.toLocaleString(
       "pt-BR",
       {
-        style: "currency",
-        currency: "BRL",
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       }
     );
+
   }
+
 
   async function atualizarCotacoes() {
 
@@ -170,6 +177,68 @@ useEffect(() => {
 
 }
 
+function ordenar(
+    campo: string
+  ) {
+
+    if (
+      campo === campoOrdenacao
+    ) {
+
+      setDirecaoOrdenacao(
+        direcaoOrdenacao === "asc"
+          ? "desc"
+          : "asc"
+      );
+
+    } else {
+
+      setCampoOrdenacao(campo);
+
+      setDirecaoOrdenacao("asc");
+
+    }
+
+  }
+
+  const totalInvestido =
+    dados.grupos.reduce(
+      (acc: number, grupo: any) =>
+        acc + grupo.totalInvestido,
+      0
+    );
+
+  const lucroTotal =
+    dados.patrimonioTotal -
+    totalInvestido;
+
+  const rentabilidadeTotal =
+    totalInvestido > 0
+      ? (
+          lucroTotal * 100
+        ) / totalInvestido
+      : 0;
+  
+  const lucroPositivo =
+    lucroTotal > 0
+      ? lucroTotal
+      : 0;
+
+    const prejuizoTotal =
+    lucroTotal < 0
+      ? Math.abs(lucroTotal)
+      : 0;
+
+  const proventos12m =
+    dados.indicadores?.proventos12m ?? 0;
+
+  const mediaMensal =
+    dados.indicadores?.mediaMensal ?? 0;
+
+  const ultimoMes =
+    dados.indicadores?.ultimoMes ?? 0;
+
+
   return (
     <div className="p-8 max-w-7xl mx-auto">
 
@@ -196,25 +265,243 @@ useEffect(() => {
         Atualizar Cotações
       </button>
     </div>
-      <div className="mt-4 mb-8">
+      <div
+        className="
+          mt-4
+          mb-8
+          flex
+          gap-4
+          flex-wrap
+        "
+      >
 
-        <div className="bg-white border rounded-2xl p-6 shadow-sm w-72">
 
-          <p className="text-sm text-gray-500">
-            Patrimônio Total
-          </p>
+        <div
+          className="
+            bg-white
+            border
+            rounded-2xl
+            p-6
+            shadow-sm
+            w-[380px]
+          "
+        >
 
-          <h2 className="text-4xl font-bold">
+          <div
+            className="
+              flex
+              items-center
+              gap-2
+              mb-4
+            "
+          >
+            <span>💰</span>
 
-            {dados.patrimonioTotal.toLocaleString(
-              "pt-BR",
-              {
-                style: "currency",
-                currency: "BRL",
+            <p className="text-sm text-gray-500">
+              Patrimônio Total
+            </p>
+
+          </div>
+
+          <div
+            className="
+              flex
+              items-center
+              gap-4
+            "
+          >
+
+            <h2 className="text-4xl font-bold">
+
+              {dados.patrimonioTotal.toLocaleString(
+                "pt-BR",
+                {
+                  style: "currency",
+                  currency: "BRL",
+                }
+              )}
+
+            </h2>
+
+            <span
+              className={
+                rentabilidadeTotal >= 0
+                  ? "text-green-600 font-semibold"
+                  : "text-red-600 font-semibold"
               }
-            )}
+            >
 
-          </h2>
+              {rentabilidadeTotal >= 0
+                ? "▲ "
+                : "▼ "}
+
+              {Math.abs(
+                rentabilidadeTotal
+              ).toFixed(2)}%
+
+            </span>
+
+          </div>
+
+          <div className="mt-4">
+
+            <div className="text-sm text-slate-500">
+              Valor Investido
+            </div>
+
+            <div className="text-xl font-semibold">
+              {totalInvestido.toLocaleString(
+                "pt-BR",
+                {
+                  style: "currency",
+                  currency: "BRL",
+                }
+              )}
+            </div>
+
+          </div>
+
+        </div>
+
+        
+
+        <div
+          className="
+            bg-white
+            border
+            rounded-2xl
+            p-6
+            shadow-sm
+            w-[380px]
+          "
+        >
+
+          <div
+            className="
+              flex
+              items-center
+              gap-2
+              mb-4
+            "
+          >
+
+            <span className="text-xl">
+              💵
+            </span>
+
+            <p className="text-sm text-gray-500">
+              Lucro Total
+            </p>
+
+          </div>
+
+          <div
+            className={
+              lucroTotal >= 0
+                ? "text-4xl font-bold text-green-600"
+                : "text-4xl font-bold text-red-600"
+            }
+          >
+
+            {valor(lucroTotal)}
+
+          </div>
+
+          <div className="mt-4 grid grid-cols-2 gap-4">
+
+            <div>
+
+              <div className="text-sm text-gray-500">
+                Ganho de Capital
+              </div>
+
+              <div className="text-xl">
+                {valor(lucroPositivo)}
+              </div>
+
+            </div>
+
+            <div>
+
+              <div className="text-sm text-gray-500">
+                Prejuízo
+              </div>
+
+              <div className="text-xl">
+                {valor(prejuizoTotal)}
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+
+        <div
+          className="
+            bg-white
+            border
+            rounded-2xl
+            p-6
+            shadow-sm
+            w-[400px]
+          "
+        >
+
+          <div
+            className="
+              flex
+              items-center
+              gap-2
+              mb-4
+            "
+          >
+
+            <span className="text-xl">
+              💸
+            </span>
+
+            <p className="text-sm text-gray-500">
+              Proventos Recebidos (12M)
+            </p>
+
+          </div>
+
+          <div className="text-4xl font-bold">
+
+            {valor(proventos12m)}
+
+          </div>
+
+          <div className="mt-4 grid grid-cols-2 gap-4">
+
+            <div>
+
+              <div className="text-sm text-gray-500">
+                Média Mensal
+              </div>
+
+              <div className="text-xl">
+                {valor(mediaMensal)}
+              </div>
+
+            </div>
+
+            <div>
+
+              <div className="text-sm text-gray-500">
+                Último Mês
+              </div>
+
+              <div className="text-xl">
+                {valor(ultimoMes)}
+              </div>
+
+            </div>
+
+          </div>
 
         </div>
 
@@ -230,6 +517,13 @@ useEffect(() => {
         )
         .map(
         (grupo: any) => {
+
+          const usaValorManual = [
+            "CRIPTO",
+            "FUNDO_INVESTIMENTO",
+            "PREV_PRIVADA",
+            "TESOURO_DIRETO",
+          ].includes(grupo.tipo);
 
           const valorAtualGrupo =
             grupo.ativos.reduce(
@@ -343,7 +637,7 @@ useEffect(() => {
                   </div>
 
                   <div className="font-semibold text-lg">
-                    {moeda(valorAtualGrupo)}
+                    {valor(valorAtualGrupo)}
                   </div>
 
               </div>
@@ -385,8 +679,8 @@ useEffect(() => {
                 >
                   {
                     lucroGrupo >= 0
-                      ? `▲ ${moeda(lucroGrupo)}`
-                      : `▼ ${moeda(lucroGrupo)}`
+                      ? `▲ ${valor(lucroGrupo)}`
+                      : `▼ ${valor(lucroGrupo)}`
                   }
 
                 </div>
@@ -436,40 +730,138 @@ useEffect(() => {
 
                   <tr className="bg-gray-50">
 
-                    <th className="p-3 text-left">
-                      Ativo
+                    <th
+                      className="p-3 text-left cursor-pointer"
+                      onClick={() =>
+                        ordenar("ticker")
+                      }
+                    >
+                      Ticker
+                        {
+                          campoOrdenacao === "ticker" &&
+                          (
+                            direcaoOrdenacao === "asc"
+                              ? " ▲"
+                              : " ▼"
+                          )
+                        }
                     </th>
 
-                    <th className="p-3 text-center">
-                      Quantidade
+                    {!usaValorManual && (
+                      <th className="p-3 text-left">
+                        Segmento
+                      </th>
+                    )}
+
+                    <th className="p-3 text-center cursor-pointer"
+                      onClick={() =>
+                        ordenar("quantidadeAtual")
+                      }
+                    >
+                      Qtd
+                        {
+                          campoOrdenacao === "quantidadeAtual" &&
+                          (
+                            direcaoOrdenacao === "asc"
+                              ? " ▲"
+                              : " ▼"
+                          )
+                        }
                     </th>
 
                     <th className="p-3 text-center">
                       PM
                     </th>
 
-                    <th className="p-3 text-center">
-                      Cotação
-                    </th>
+                    {!usaValorManual && (
+
+                      <th className="p-3 text-center cursor-pointer"
+                          onClick={() =>
+                            ordenar("valorAtualCotacao")
+                          }
+                      >
+                        P. Atual
+                          {
+                            campoOrdenacao === "valorAtualCotacao" &&
+                            (
+                              direcaoOrdenacao === "asc"
+                                ? " ▲"
+                                : " ▼"
+                            )
+                          }
+                      </th>
+                    )}  
 
                     <th className="p-3 text-center">
                       Investido
                     </th>
 
-                    <th className="p-3 text-center">
-                      Atual
+                    <th className="p-3 text-center cursor-pointer"
+                        onClick={() =>
+                          ordenar("valorAtual")
+                        }
+                    >
+                      Saldo Atual
+                        {
+                          campoOrdenacao === "valorAtual" &&
+                          (
+                            direcaoOrdenacao === "asc"
+                              ? " ▲"
+                              : " ▼"
+                          )
+                        }
+                    </th>
+
+                    <th className="p-3 text-center cursor-pointer"
+                        onClick={() =>
+                              ordenar("resultado")
+                            }
+                    >
+                      Ganho/Perda
+                      {
+                          campoOrdenacao === "resultado" &&
+                          (
+                            direcaoOrdenacao === "asc"
+                              ? " ▲"
+                              : " ▼"
+                          )
+                        }
+                    </th>
+
+                    <th className="p-3 text-center cursor-pointer"
+                        onClick={() =>
+                          ordenar("rentabilidade")
+                        }
+                    >
+                      Variação
+                        {
+                          campoOrdenacao === "rentabilidade" &&
+                          (
+                            direcaoOrdenacao === "asc"
+                              ? " ▲"
+                              : " ▼"
+                          )
+                        }
+                    </th>
+
+                    <th className="p-3 text-center cursor-pointer"
+                        onClick={() =>
+                          ordenar("percentualNoTipo")
+                        }
+                    >
+                      % Tipo
+                        {
+                          campoOrdenacao === "percentualNoTipo" &&
+                          (
+                            direcaoOrdenacao === "asc"
+                              ? " ▲"
+                              : " ▼"
+                          )
+                        }
                     </th>
 
                     <th className="p-3 text-center">
-                      Resultado
-                    </th>
-
-                    <th className="p-3 text-center">
-                      Rentab.
-                    </th>
-
-                    <th className="p-3 text-center">
-                      Peso
+                      % Carteira
                     </th>
 
                   </tr>
@@ -478,7 +870,29 @@ useEffect(() => {
 
                 <tbody>
 
-                  {grupo.ativos.map(
+                  {[...grupo.ativos]
+                    .sort((a, b) => {
+
+                      const aValor =
+                        a[campoOrdenacao];
+
+                      const bValor =
+                        b[campoOrdenacao];
+
+                      if (aValor < bValor)
+                        return direcaoOrdenacao === "asc"
+                          ? -1
+                          : 1;
+
+                      if (aValor > bValor)
+                        return direcaoOrdenacao === "asc"
+                          ? 1
+                          : -1;
+
+                      return 0;
+
+                    })
+                    .map(
                     (ativo: any) => (
 
                     <tr
@@ -490,56 +904,34 @@ useEffect(() => {
                         {ativo.ticker}
                       </td>
 
+                      {!usaValorManual && (
+                        <td className="p-3">
+                          {ativo.segmento}
+                        </td>
+                      )}
+                      
                       <td className="p-3 text-center">
                         {ativo.quantidadeAtual}
                       </td>
 
                       <td className="p-3 text-center">
+                        {valor(ativo.precoMedio)}
+                      </td>
 
-                        {ativo.precoMedio.toLocaleString(
-                          "pt-BR",
-                          {
-                            style: "currency",
-                            currency: "BRL",
-                          }
-                        )}
+                      {!usaValorManual && (
 
+                        <td className="p-3 text-center">
+                          {valor(ativo.valorAtualCotacao)}
+                        </td>
+
+                      )}
+
+                      <td className="p-3 text-center">
+                        {valor(ativo.valorInvestido)}
                       </td>
 
                       <td className="p-3 text-center">
-
-                        {ativo.valorAtualCotacao.toLocaleString(
-                          "pt-BR",
-                          {
-                            style: "currency",
-                            currency: "BRL",
-                          }
-                        )}
-
-                      </td>
-
-                      <td className="p-3 text-center">
-
-                        {ativo.valorInvestido.toLocaleString(
-                          "pt-BR",
-                          {
-                            style: "currency",
-                            currency: "BRL",
-                          }
-                        )}
-
-                      </td>
-
-                      <td className="p-3 text-center">
-
-                        {ativo.valorAtual.toLocaleString(
-                          "pt-BR",
-                          {
-                            style: "currency",
-                            currency: "BRL",
-                          }
-                        )}
-
+                        {valor(ativo.valorAtual)}
                       </td>
 
                       <td
@@ -549,15 +941,7 @@ useEffect(() => {
                             : "text-red-600"
                         }`}
                       >
-
-                        {ativo.resultado.toLocaleString(
-                          "pt-BR",
-                          {
-                            style: "currency",
-                            currency: "BRL",
-                          }
-                        )}
-
+                        {valor(ativo.resultado)}
                       </td>
 
                       <td
@@ -567,22 +951,15 @@ useEffect(() => {
                             : "text-red-600"
                         }`}
                       >
-
                         {ativo.rentabilidade.toFixed(2)}%
-
                       </td>
 
-                      
+                      <td className="p-3 text-center">
+                        {ativo.percentualNoTipo.toFixed(2)}%
+                      </td>
 
                       <td className="p-3 text-center">
-
-                        {(
-                          ativo.valorInvestido *
-                          100 /
-                          dados.patrimonioTotal
-                        ).toFixed(2)}
-                        %
-
+                          {ativo.percentualCarteira.toFixed(2)}%
                       </td>
 
                     </tr>

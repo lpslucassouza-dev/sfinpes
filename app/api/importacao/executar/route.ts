@@ -56,6 +56,8 @@ export async function POST(
       sheet
     );
 
+    //console.log(rows[0]);
+
   let importados = 0;
 
   const assets =

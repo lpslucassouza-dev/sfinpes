@@ -30,29 +30,25 @@ interface Transaction {
 export default function LancamentosPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [assets, setAssets] = useState<Asset[]>([]);
-
   const [open, setOpen] = useState(false);
-
   const [editingId, setEditingId] = useState<string | null>(null);
-
   const [assetId, setAssetId] = useState("");
-  const [tipoOperacao, setTipoOperacao] =
-    useState<"COMPRA" | "VENDA">("COMPRA");
-
+  const [tipoOperacao, setTipoOperacao] = useState<"COMPRA" | "VENDA">("COMPRA");
   const dataAtual =
     new Date()
       .toISOString()
       .split("T")[0];  
-
   const [dataOperacao, setDataOperacao] = useState(dataAtual);
   const [quantidade, setQuantidade] = useState("");
   const [valorUnitario, setValorUnitario] = useState("");
-
   const [tipoAtivo, setTipoAtivo] = useState("ACAO");
-
   const total =
     (Number(quantidade) || 0) *
     (Number(valorUnitario) || 0);
+  const [mesFiltro, setMesFiltro] =
+  useState(new Date().getMonth() + 1);
+
+  const [anoFiltro, setAnoFiltro] = useState(0);
 
   async function loadTransactions() {
     const response = await fetch(
@@ -178,6 +174,54 @@ export default function LancamentosPage() {
     );
   }
 
+  const meses = [
+    "Janeiro",
+    "Fevereiro",
+    "Março",
+    "Abril",
+    "Maio",
+    "Junho",
+    "Julho",
+    "Agosto",
+    "Setembro",
+    "Outubro",
+    "Novembro",
+    "Dezembro",
+  ];
+
+  const transactionsFiltradas =
+    transactions.filter((tx) => {
+
+      const data =
+        new Date(tx.dataOperacao);
+
+      const filtroMes =
+        mesFiltro === 0
+          ? true
+          : data.getMonth() + 1 === mesFiltro;
+
+      const filtroAno =
+        anoFiltro === 0
+          ? true
+          : data.getFullYear() === anoFiltro;
+
+      return (
+        filtroMes &&
+        filtroAno
+      );
+
+    });
+
+  const anosDisponiveis = [
+    ...new Set(
+      transactions.map((tx) =>
+        new Date(
+          tx.dataOperacao
+        ).getFullYear()
+      )
+    ),
+    ].sort((a, b) => a - b);
+
   return (
     <div className="p-8">
 
@@ -198,6 +242,102 @@ export default function LancamentosPage() {
         >
           + Novo Lançamento
         </button>
+      </div>
+
+      <div
+        className="
+          flex
+          justify-center
+          items-center
+          gap-4
+          mb-6
+          bg-white
+          border
+          rounded-xl
+          p-4
+        "
+      >
+
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium">
+          Mês:
+          </span>
+
+          <select
+            value={mesFiltro}
+            onChange={(e) =>
+              setMesFiltro(
+                Number(e.target.value)
+              )
+            }
+            className="
+              border
+              rounded-lg
+              px-3
+              py-2
+            "
+          >
+
+            <option value={0}>
+              Todos os Meses
+            </option>
+
+            {meses.map(
+              (mes, index) => (
+
+                <option
+                  key={mes}
+                  value={index + 1}
+                >
+                  {mes}
+                </option>
+
+              )
+            )}
+
+          </select>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium">
+            Ano:
+          </span>
+
+          <select
+            value={anoFiltro}
+            onChange={(e) =>
+              setAnoFiltro(
+                Number(e.target.value)
+              )
+            }
+            className="
+              border
+              rounded-lg
+              px-3
+              py-2
+            "
+          >
+
+          <option value={0}>
+            Todos os Anos
+          </option>
+
+          {anosDisponiveis.map(
+            (ano) => (
+
+                <option
+                  key={ano}
+                  value={ano}
+                >
+                  {ano}
+                </option>
+
+              )
+            )}
+
+          </select>
+        </div>
+
       </div>
 
       <div className="border rounded-lg overflow-hidden">
@@ -250,7 +390,9 @@ export default function LancamentosPage() {
           </thead>
 
           <tbody>
-            {transactions.map((tx) => (
+
+            
+           {transactionsFiltradas.map((tx) => (
               <tr
                 key={tx.id}
                 className="border-b"
