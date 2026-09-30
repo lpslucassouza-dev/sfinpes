@@ -13,9 +13,6 @@ export default function ImportacaoPage() {
   const [importando, setImportando] =
     useState(false);
 
-  const [tipoImportacao, setTipoImportacao] =
-    useState("movimentacoes");
-
   async function analisar() {
 
     if (!arquivo) {
@@ -33,7 +30,7 @@ export default function ImportacaoPage() {
 
     const response =
       await fetch(
-       `/api/importacao/${tipoImportacao}/preview`,
+       `/api/importacao/preview`,
         {
           method: "POST",
           body: formData,
@@ -64,7 +61,7 @@ export default function ImportacaoPage() {
 
       const response =
         await fetch(
-          `/api/importacao/${tipoImportacao}/executar`,
+          `/api/importacao/executar`,
           {
             method: "POST",
             body: formData,
@@ -97,37 +94,6 @@ export default function ImportacaoPage() {
 
       </div>
 
-      <div className="mb-4">
-
-        <label className="block mb-2 font-medium">
-          Tipo de Importação
-        </label>
-
-        <select
-          value={tipoImportacao}
-          onChange={(e) =>
-            setTipoImportacao(e.target.value)
-          }
-          className="
-            border
-            rounded-lg
-            px-3
-            py-2
-          "
-        >
-
-          <option value="movimentacoes">
-            Movimentações
-          </option>
-
-          <option value="rendimentos">
-            Rendimentos
-          </option>
-
-        </select>
-
-      </div>
-
       <div className="border rounded-xl bg-white p-6">
 
         <input
@@ -156,8 +122,7 @@ export default function ImportacaoPage() {
 
       </div>
 
-      {preview &&
-      tipoImportacao === "movimentacoes" && (
+      {preview && (
 
         <div className="mt-8">
 
@@ -306,163 +271,6 @@ export default function ImportacaoPage() {
         </div>
       )
       }
-
-      
-
-      {preview &&
-      tipoImportacao === "rendimentos" && (
-
-        <div className="mt-8">
-
-          <div className="mb-4">
-
-            <strong>
-
-              Total encontrado:
-
-            </strong>
-
-            {" "}
-
-            {preview.totalRegistros}
-
-            {" "}registro(s)
-
-          </div>
-
-          <div className="border rounded-xl overflow-hidden">
-
-            <table className="w-full">
-
-              <thead>
-
-                <tr className="bg-slate-800 text-white">
-
-                  <th className="p-3 text-left">
-                    Ticker
-                  </th>
-
-                  <th className="p-3 text-left">
-                    Tipo DY
-                  </th>
-
-                  <th className="p-3 text-left">
-                    Data
-                  </th>
-
-                  <th className="p-3 text-right">
-                    Qtd Cotas
-                  </th>
-
-                  <th className="p-3 text-right">
-                    DY
-                  </th>
-
-                  <th className="p-3 text-right">
-                    Vl Unit
-                  </th>
-
-                  <th className="p-3 text-right">
-                    Vl Total
-                  </th>
-
-                  <th className="p-3 text-center">
-                    Status
-                  </th>
-
-                </tr>
-
-              </thead>
-
-              <tbody>
-
-                {preview.preview.map(
-                  (row: any, index: number) => (
-
-                    <tr
-                      key={index}
-                      className="border-b"
-                    >
-
-                      <td className="p-3">
-                        {row.ticker}
-                      </td>
-
-                      <td className="p-3">
-                        {row.tipoRendimento}
-                      </td>
-
-                      <td className="p-3">
-                        {row.data}
-                      </td>
-
-                      <td className="p-3 text-right">
-                        {row.quantidadeCotas}
-                      </td>
-
-                      <td className="p-3 text-right">
-                        {(Number(row.dy) * 100).toFixed(2)}%
-                      </td>
-
-                      <td className="p-3 text-right">
-                        {Number(
-                          row.valorUnitario
-                        ).toLocaleString(
-                          "pt-BR",
-                          {
-                            style: "currency",
-                            currency: "BRL",
-                          }
-                        )}
-                      </td>
-
-                      <td className="p-3 text-right">
-                        {Number(
-                          row.valorTotal
-                        ).toLocaleString(
-                          "pt-BR",
-                          {
-                            style: "currency",
-                            currency: "BRL",
-                          }
-                        )}
-                      </td>
-
-                      <td className="p-3 text-center">
-                        {row.ativoExiste
-                          ? "✅"
-                          : "❌"}
-                      </td>
-
-                    </tr>
-
-                  )
-                )}
-
-              </tbody>
-
-            </table>
-          </div>
-          
-                <button
-                  onClick={importar}
-                  className="
-                  mt-6
-                  bg-green-700
-                  text-white
-                  px-4
-                  py-2
-                  rounded-lg
-                  "
-                  >
-                  Importar Definitivamente
-                  </button>
-
-        </div>
-
-      )
-      }
-
     </div>
   );
 }

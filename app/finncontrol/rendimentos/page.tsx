@@ -4,46 +4,19 @@ import { useEffect, useState } from "react";
 
 export default function RendimentosPage() {
 
-    const [rendimentos, setRendimentos] =
-    useState<any[]>([]);
-
-    const [assets, setAssets] =
-    useState<any[]>([]);
-
-    const [open, setOpen] =
-    useState(false);
-
-    const [filtroTipoAtivo, setFiltroTipoAtivo] =
-    useState("TODOS");
-
-    const [filtroAtivo, setFiltroAtivo] =
-    useState("TODOS");
-
-    const [filtroTipoRendimento, setFiltroTipoRendimento] =
-    useState("TODOS");
-
-    const [tipoAtivo, setTipoAtivo] =
-    useState("FII");
-
-    const [assetId, setAssetId] =
-    useState("");
-
-    const [tipoRendimento, setTipoRendimento] =
-    useState("RENDIMENTO");
-
-    const dataAtual =
-        new Date()
-        .toISOString()
-        .split("T")[0];
-
-    const [dataRecebimento, setDataRecebimento] =
-    useState(dataAtual);
-
-    const [valorTotal, setValorTotal] =
-    useState("");
-
-    const [filtroMes, setFiltroMes] =
-    useState("TODOS");
+    const [rendimentos, setRendimentos] = useState<any[]>([]);
+    const [assets, setAssets] = useState<any[]>([]);
+    const [open, setOpen] = useState(false);
+    const [filtroTipoAtivo, setFiltroTipoAtivo] =useState("TODOS");
+    const [filtroAtivo, setFiltroAtivo] = useState("TODOS");
+    const [filtroTipoRendimento, setFiltroTipoRendimento] = useState("TODOS");
+    const [tipoAtivo, setTipoAtivo] = useState("FII");
+    const [assetId, setAssetId] = useState("");
+    const [tipoRendimento, setTipoRendimento] = useState("RENDIMENTO");
+    const dataAtual = new Date().toISOString().split("T")[0];
+    const [dataRecebimento, setDataRecebimento] = useState(dataAtual);
+    const [valorTotal, setValorTotal] = useState("");
+    const [filtroMes, setFiltroMes] = useState("TODOS");
 
     const totalRecebido =
         rendimentos.reduce(
@@ -51,39 +24,6 @@ export default function RendimentosPage() {
             acc + r.valorTotal,
             0
         );
-
-    const recebidoAcoes =
-    rendimentos
-        .filter(
-        (r) =>
-            r.asset?.tipo === "ACAO"
-        )
-        .reduce(
-        (acc, r) =>
-            acc + r.valorTotal,
-        0
-        );
-
-    const recebidoFiis =
-    rendimentos
-        .filter(
-        (r) =>
-            r.asset?.tipo === "FII"
-        )
-        .reduce(
-        (acc, r) =>
-            acc + r.valorTotal,
-        0
-        );
-
-    const dyMedio =
-    rendimentos.length > 0
-        ? rendimentos.reduce(
-            (acc, r) =>
-            acc + (r.dy || 0),
-            0
-        ) / rendimentos.length
-        : 0;
 
     function moeda(valor: number) {
     return valor.toLocaleString(
@@ -241,6 +181,38 @@ export default function RendimentosPage() {
         return true;
     });
 
+    const totalRecebidoFiltro =
+        rendimentosFiltrados.reduce(
+            (acc, item) =>
+            acc + item.valorTotal,
+            0
+        );
+
+  const recebidoAcoes =
+    rendimentosFiltrados
+        .filter(
+        (item) =>
+            item.asset.tipo === "ACAO"
+        )
+        .reduce(
+        (acc, item) =>
+            acc + item.valorTotal,
+        0
+        );
+
+  const recebidoFiis =
+    rendimentosFiltrados
+        .filter(
+        (item) =>
+            item.asset.tipo === "FII"
+        )
+        .reduce(
+        (acc, item) =>
+            acc + item.valorTotal,
+        0
+        );
+
+
 const nomesRendimento: Record<string, string> = {
   DIVIDENDO: "Dividendo",
   JSCP: "JSCP",
@@ -282,15 +254,6 @@ const patrimonioInvestido =
     0
   );
 
-  const yieldOnCost =
-    patrimonioInvestido > 0
-        ? (
-            totalRecebido *
-            100
-        ) /
-        patrimonioInvestido
-        : 0;
-
 const resumoMensal =
   Object.values(
 
@@ -329,6 +292,32 @@ const resumoMensal =
     )
   );
 
+  function formatarMes(
+    referencia: string
+    ) {
+
+    const [ano, mes] =
+        referencia.split("-");
+
+    const meses = [
+        "Janeiro",
+        "Fevereiro",
+        "Março",
+        "Abril",
+        "Maio",
+        "Junho",
+        "Julho",
+        "Agosto",
+        "Setembro",
+        "Outubro",
+        "Novembro",
+        "Dezembro",
+    ];
+
+    return `${meses[Number(mes) - 1]}/${ano}`;
+
+    }
+
   return (
 
     <div className="p-8 max-w-7xl mx-auto">
@@ -362,7 +351,7 @@ const resumoMensal =
 
         </div>
 
-        <div className="grid md:grid-cols-5 gap-4 mb-8">
+        <div className="grid md:grid-cols-4 gap-4 mb-8">
 
             <div className="
                 border
@@ -376,7 +365,7 @@ const resumoMensal =
                 </p>
 
                 <h2 className="text-2xl font-bold text-right">
-                    {moeda(totalRecebido)}
+                    {moeda(totalRecebidoFiltro)}
                 </h2>
             </div>
 
@@ -400,18 +389,6 @@ const resumoMensal =
 
                 <h2 className="text-2xl font-bold text-right">
                     {moeda(recebidoFiis)}
-                </h2>
-
-            </div>
-
-            <div className="border rounded-xl p-4 bg-white">
-
-                <p className="text-sm text-blue-800">
-                DY Médio
-                </p>
-
-                <h2 className="text-2xl font-bold text-right">
-                    {dyMedio.toFixed(2)}%
                 </h2>
 
             </div>
@@ -444,42 +421,28 @@ const resumoMensal =
             */}
         </div>
 
-        <div className="border rounded-xl bg-white p-4 mb-6">
+        <div className="border rounded-xl bg-white p-1 mb-3">
 
-            <h2 className="font-bold mb-4">
+            <h2 className="font-bold mb-1">
                 Resumo Mensal
             </h2>
 
-            <div className="grid md:grid-cols-4 gap-4">
+            <div className="flex justify-center gap-5">
 
-                {resumoMensal.map(
-                (mes: any) => (
+                {resumoMensal
+                    .slice(0, 3)
+                    .map(
+                            (mes: any) => (
 
-                <div
-                    key={mes.mes}
-                    className="
-                    border
-                    rounded-lg
-                    p-3
-                    "
-                >
+                <div key={mes.mes}
+                    className="border rounded-lg p-2">
 
-                    <div className="text-sm text-gray-500">
-                    {mes.mes}
+                    <div className="justify-center text-slate-500">
+                        {formatarMes(mes.mes)}
                     </div>
 
-                    <div className="font-bold">
-                    {moeda(
-                        mes.total
-                    )}
-                    </div>
-
-                    <div className="text-xs text-gray-400">
-
-                    {mes.quantidade}
-                    {" "}
-                    lançamento(s)
-
+                    <div className="text-2xl font-bold text-blue-700 mt-2 justify-center">
+                        {moeda(mes.total)}
                     </div>
 
                 </div>
@@ -490,7 +453,7 @@ const resumoMensal =
 
         </div>
 
-        <div className="flex gap-3 mb-6 flex-wrap">
+        <div className="flex gap-3 justify-center mb-6 flex-wrap">
 
             <select
                 value={filtroMes}

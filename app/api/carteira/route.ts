@@ -11,8 +11,12 @@ export async function GET() {
       },
 
       include: {
-        transactions: true,
-      },
+        transactions: {
+          orderBy: {
+            dataOperacao: "asc",
+          },
+        },
+      }
 
     });
   

@@ -21,38 +21,46 @@ export function calcularPosicaoAtual(
   transacoes: any[]
 ) {
 
-  let quantidadeAtual = 0;
+    let quantidadeAtual = 0;
 
-  let custoTotal = 0;
+    let custoTotal = 0;
 
-  let precoMedio = 0;
+    let precoMedio = 0;
 
-  for (const tx of transacoes) {
+    for (const tx of transacoes) {
 
-    if (tx.tipoOperacao === "COMPRA") {
+      console.log(
+        tx.dataOperacao,
+        tx.tipoOperacao,
+        tx.quantidade,
+        precoMedio
+      );
 
-      custoTotal += tx.valorTotal;
+      if (tx.tipoOperacao === "COMPRA") {
 
-      quantidadeAtual += tx.quantidade;
+        custoTotal += tx.valorTotal;
 
-      precoMedio =
-        custoTotal / quantidadeAtual;
+        quantidadeAtual += tx.quantidade;
+
+        precoMedio = custoTotal / quantidadeAtual;
+      }
+
+      if (tx.tipoOperacao === "VENDA") {
+
+        custoTotal -= tx.quantidade * precoMedio;
+
+        quantidadeAtual -= tx.quantidade;
+
+      }
     }
 
-    if (tx.tipoOperacao === "VENDA") {
+    const valorInvestido = custoTotal;
 
-      quantidadeAtual -= tx.quantidade;
-    }
+    return {
+      quantidadeAtual,
+
+      precoMedio,
+
+      valorInvestido,
+    };
   }
-
-  const valorInvestido =
-  quantidadeAtual * precoMedio;
-
-return {
-  quantidadeAtual,
-
-  precoMedio,
-
-  valorInvestido,
-};
-}

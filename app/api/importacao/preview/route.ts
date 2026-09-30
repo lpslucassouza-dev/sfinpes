@@ -5,6 +5,8 @@ export async function POST(
   req: Request
 ) {
 
+  try {
+
   const formData =
     await req.formData();
 
@@ -97,4 +99,17 @@ export async function POST(
     preview,
 
   });
+
+  } catch (error) {
+
+        return Response.json(
+        {
+          error: String(error),
+        },
+        {
+          status: 500,
+        }
+      );
+      
+  }
 }

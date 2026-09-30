@@ -68,42 +68,88 @@ export default async function ContaCorrentePage({
       },
     });
 
-  const lancamentos =
-    await prisma.lancamentoContaCorrente.findMany({
-      where: {
-        data: {
-          gte: new Date(
-            ano,
-            mes - 1,
-            1
-          ),
-          lt: new Date(
-            ano,
-            mes,
-            1
-          ),
+  const todosLancamentosMes =
+  await prisma.lancamentoContaCorrente.findMany({
+
+    include: {
+      categoria: true,
+      subCategoria: true,
+    },
+
+    orderBy: [
+      {
+        data: "asc",
+      },
+      {
+        modalidade: "asc",
+      },
+      {
+        categoria: {
+          nome: "asc",
         },
       },
+    ],
 
-      include: {
-        categoria: true,
-        subCategoria: true,
-      },
+  });
 
-      orderBy: [
-        {
-          data: "asc",
-        },
-        {
-          modalidade: "asc",
-        },
-        {
-          categoria: {
-            nome: "asc",
-          },
-        },
-      ],
-    }); 
+const lancamentos =
+  todosLancamentosMes.filter(
+    (lancamento) => {
+
+      const data =
+        new Date(
+          lancamento.data
+        );
+
+      const anoData =
+        data.getUTCFullYear();
+
+      const mesData =
+        data.getUTCMonth() + 1;
+
+      return (
+        anoData === ano &&
+        mesData === mes
+      );
+
+    }
+  );
+
+    {/*
+      console.log(
+        "MES",
+        mes,
+        "ANO",
+        ano
+      );
+
+      console.log(
+        lancamentos.map((l) => ({
+          id: l.id,
+          data: l.data,
+          descricao: l.descricao,
+        }))
+      );
+    */}
+
+    function formatarData(
+      data: Date
+    ) {
+
+      const iso =
+        new Date(data)
+          .toISOString()
+          .split("T")[0];
+
+      const [
+        ano,
+        mes,
+        dia,
+      ] = iso.split("-");
+
+      return `${dia}/${mes}/${ano}`;
+
+    }
 
     const lancamentosFormatados =
       lancamentos.map((lancamento) => ({
@@ -706,10 +752,8 @@ export default async function ContaCorrentePage({
                 >
                 
                   <td className="px-4 py-3">
-                    {new Date(
+                    {formatarData(
                       lancamento.data
-                    ).toLocaleDateString(
-                      "pt-BR"
                     )}
                   </td>
 

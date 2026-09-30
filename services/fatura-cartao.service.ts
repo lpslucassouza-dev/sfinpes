@@ -72,8 +72,13 @@ export async function atualizarFaturasCartao() {
 
   for (const item of agrupado.values()) {
 
+    const referenciaCompetencia =
+      `${item.competenciaAno}-${String(
+        item.competenciaMes + 1
+      ).padStart(2, "0")}`;
+
     const descricao =
-      `Fatura Cartão de Crédito ${item.cartao}`;
+      `Fatura Cartão de Crédito ${item.cartao} - ${referenciaCompetencia}`;
 
     const data =
       new Date(
@@ -107,11 +112,7 @@ export async function atualizarFaturasCartao() {
       await prisma.lancamentoContaCorrente.findFirst({
 
         where: {
-
           descricao,
-
-          data,
-
         },
 
       });

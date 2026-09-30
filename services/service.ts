@@ -18,7 +18,14 @@ export function calcularPosicao(
     diferencaPm: 0,
   };
 
-  for (const tx of transacoes) {
+  const transacoesOrdenadas =
+    [...transacoes].sort(
+      (a, b) =>
+        new Date(a.dataOperacao).getTime() -
+        new Date(b.dataOperacao).getTime()
+    );
+
+  for (const tx of transacoesOrdenadas) {
 
     const pmAnterior =
       quantidadeAtual > 0
@@ -49,17 +56,24 @@ export function calcularPosicao(
 
     if (tx.tipoOperacao === "VENDA") {
 
+      custoTotal -= tx.quantidade * pmAnterior;
+
       quantidadeAtual -= tx.quantidade;
 
       if (tx.id === transactionId) {
+
         resultado = {
+
           totalCotas: quantidadeAtual,
-          precoMedio: Number(
-            pmAnterior.toFixed(2)
-          ),
+
+          precoMedio: Number(pmAnterior.toFixed(2)),
+
           diferencaPm: 0,
+
         };
+
       }
+
     }
   }
 

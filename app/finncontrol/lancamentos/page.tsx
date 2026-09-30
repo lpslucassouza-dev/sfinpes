@@ -34,20 +34,16 @@ export default function LancamentosPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [assetId, setAssetId] = useState("");
   const [tipoOperacao, setTipoOperacao] = useState<"COMPRA" | "VENDA">("COMPRA");
-  const dataAtual =
-    new Date()
-      .toISOString()
-      .split("T")[0];  
+  const dataAtual = new Date().toISOString().split("T")[0];  
   const [dataOperacao, setDataOperacao] = useState(dataAtual);
   const [quantidade, setQuantidade] = useState("");
   const [valorUnitario, setValorUnitario] = useState("");
   const [tipoAtivo, setTipoAtivo] = useState("ACAO");
+  const [ativoFiltro, setAtivoFiltro] = useState("");
   const total =
     (Number(quantidade) || 0) *
     (Number(valorUnitario) || 0);
-  const [mesFiltro, setMesFiltro] =
-  useState(new Date().getMonth() + 1);
-
+  const [mesFiltro, setMesFiltro] = useState(0);
   const [anoFiltro, setAnoFiltro] = useState(0);
 
   async function loadTransactions() {
@@ -198,16 +194,24 @@ export default function LancamentosPage() {
       const filtroMes =
         mesFiltro === 0
           ? true
-          : data.getMonth() + 1 === mesFiltro;
+          : data.getMonth() + 1 ===
+            mesFiltro;
 
       const filtroAno =
         anoFiltro === 0
           ? true
           : data.getFullYear() === anoFiltro;
 
+      const filtroAtivo =
+        ativoFiltro === ""
+          ? true
+          : tx.asset.ticker ===
+            ativoFiltro;
+
       return (
         filtroMes &&
-        filtroAno
+        filtroAno &&
+        filtroAtivo
       );
 
     });
@@ -221,6 +225,76 @@ export default function LancamentosPage() {
       )
     ),
     ].sort((a, b) => a - b);
+
+  const ativosDisponiveis = [
+    ...new Set(
+      transactions.map(
+        (tx) => tx.asset.ticker
+      )
+    ),
+  ].sort();
+
+  const totalCompras =
+    transactionsFiltradas
+      .filter(
+        (tx) =>
+          tx.tipoOperacao === "COMPRA"
+      )
+      .reduce(
+        (acc, tx) =>
+          acc + tx.valorTotal,
+        0
+      );
+
+  const totalVendas =
+    transactionsFiltradas
+      .filter(
+        (tx) =>
+          tx.tipoOperacao === "VENDA"
+      )
+      .reduce(
+        (acc, tx) =>
+          acc + tx.valorTotal,
+        0
+      );
+
+  const resumoPorTipo =
+    transactionsFiltradas.reduce(
+      (acc: Record<string, number>, tx) => {
+
+        const tipo =
+          tx.asset.tipo;
+
+        if (!acc[tipo]) {
+
+          acc[tipo] = 0;
+
+        }
+
+        if (
+          tx.tipoOperacao === "COMPRA"
+        ) {
+
+          acc[tipo] += tx.valorTotal;
+
+        }
+
+        return acc;
+
+      },
+
+      {}
+    );
+
+  const nomesTipos: Record<string, string> = {
+    ACAO: "Ações",
+    FII: "FIIs",
+    ETF: "ETFs",
+    CRIPTO: "Cripto",
+    FUNDO_INVESTIMENTO: "Fundos",
+    TESOURO_DIRETO: "Tesouro",
+    PREV_PRIVADA: "Previdência",
+  };
 
   return (
     <div className="p-8">
@@ -336,6 +410,98 @@ export default function LancamentosPage() {
             )}
 
           </select>
+        </div>
+
+        <div className="flex items-center gap-2">
+
+          <span className="text-sm font-medium">
+            Ativo:
+          </span>
+
+          <select
+            value={ativoFiltro}
+            onChange={(e) =>
+              setAtivoFiltro(
+                e.target.value
+              )
+            }
+            className="
+              border
+              rounded-lg
+              px-3
+              py-2
+            "
+          >
+
+            <option value="">
+              Todos os Ativos
+            </option>
+
+            {ativosDisponiveis.map(
+              (ativo) => (
+
+                <option
+                  key={ativo}
+                  value={ativo}
+                >
+                  {ativo}
+                </option>
+
+              )
+            )}
+
+          </select>
+        </div>
+      </div>
+
+      <div className="rounded-xl p-1 mb-3">
+
+        <div className="flex flex-wrap justify-center gap-3">
+
+          <div
+            className="
+              bg-green-100
+              text-green-700
+              px-4
+              py-2
+              rounded-full
+              font-bold
+            "
+          >
+            Compras: {moeda(totalCompras)}
+          </div>
+
+          {Object.entries(resumoPorTipo).map(
+            ([tipo, valor]) => (
+              <div
+                key={tipo}
+                className="
+                  bg-blue-100
+                  text-blue-700
+                  px-4
+                  py-2
+                  rounded-full
+                  font-bold
+                "
+              >
+                {nomesTipos[tipo] || tipo}: {moeda(Number(valor))}
+              </div>
+            )
+          )}
+
+          <div
+            className="
+              bg-red-100
+              text-red-700
+              px-4
+              py-2
+              rounded-full
+              font-bold
+            "
+          >
+            Vendas: {moeda(totalVendas)}
+          </div>
+
         </div>
 
       </div>
