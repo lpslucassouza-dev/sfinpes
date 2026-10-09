@@ -29,12 +29,14 @@ export function calcularPosicaoAtual(
 
     for (const tx of transacoes) {
 
-      console.log(
+      {/*
+        console.log(
         tx.dataOperacao,
         tx.tipoOperacao,
         tx.quantidade,
         precoMedio
       );
+      */}
 
       if (tx.tipoOperacao === "COMPRA") {
 

@@ -72,8 +72,7 @@ export async function POST(req: Request) {
     data: {
         assetId: body.assetId,
         tipoOperacao: body.tipoOperacao,
-        dataOperacao: new Date(body.dataOperacao),
-
+        dataOperacao: new Date(`${body.dataOperacao}T12:00:00`),
         quantidade,
         valorUnitario,
         valorTotal,

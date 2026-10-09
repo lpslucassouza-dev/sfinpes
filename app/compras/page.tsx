@@ -370,6 +370,25 @@ const encerrando = comprasFormatadas
     }
   }
 
+  function formatarData(
+    data: Date
+  ) {
+
+    const iso =
+      new Date(data)
+        .toISOString()
+        .split("T")[0];
+
+    const [
+      ano,
+      mes,
+      dia,
+    ] = iso.split("-");
+
+    return `${dia}/${mes}/${ano}`;
+
+  }
+
   return (
     <main className="max-w-[1600px] mx-auto p-8">
       {/* Header */}
@@ -434,7 +453,9 @@ const encerrando = comprasFormatadas
           />
 
           <GastosPorCategoria
-            categorias={gastosPorCategoria}
+            categorias={
+              gastosPorCategoria.slice(0, 5)
+            }
           />
 
         </div>
@@ -527,9 +548,9 @@ const encerrando = comprasFormatadas
                 "
               >
                 <td className="px-2 py-1">
-                  {new Date(
+                  {formatarData(
                     parcela.compra.dataCompra
-                  ).toLocaleDateString("pt-BR")}
+                  )}
                 </td>
 
                 <td className="px-2 py-1">
@@ -596,9 +617,8 @@ const encerrando = comprasFormatadas
                       descricao={parcela.compra.descricao}
                       usuarioId={parcela.compra.usuarioId}
                       categoriaId={parcela.compra.categoriaId}
-                      subCategoriaId={
-                        parcela.compra.subCategoriaId
-                      }
+                      subCategoriaId={parcela.compra.subCategoriaId}
+                      dataCompra={parcela.compra.dataCompra.toISOString().split("T")[0]}
                       usuarios={usuarios}
                       categorias={categorias}
                     />

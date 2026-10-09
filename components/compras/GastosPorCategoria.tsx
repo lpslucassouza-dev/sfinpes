@@ -22,83 +22,109 @@ export default function GastosPorCategoria({
       0
   );
 
+  const totalGeral =
+    categorias.reduce(
+      (acc, categoria) =>
+        acc + categoria.valor,
+      0
+    );
+
+
   return (
     <div>
 
       <div
         className="
           bg-white
+          rounded-xl
           border
-          border-slate-200
-          shadow-md
-          rounded-2xl
           p-2
         "
       >
 
         <h2 className="text-xl font-semibold">
-          Gastos por Categoria
+          Gastos por Categoria - Top 5
         </h2>
-
-        <p className="text-slate-500 text-sm mb-2">
-          Distribuição no período filtrado
-        </p>
 
         <div className="space-y-2">
 
-          {categorias.map(
-            (categoria) => {
+          {categorias.map((categoria) => {
 
-                const percentual =
-                  totalCategorias > 0
-                    ? (
-                        (categoria.valor * 100) /
-                        totalCategorias
-                      ).toFixed(1)
-                    : "0";
+            const percentual =
+              totalGeral > 0
+                ? (
+                    categoria.valor * 100
+                  ) / totalGeral
+                : 0;
 
-              return (
+            return (
+
+              <div
+                key={categoria.nome}
+                className="mb-1"
+              >
+
                 <div
-                  key={categoria.nome}
+                  className="
+                    flex
+                    justify-between
+                    text-sm
+                    mb-1
+                  "
                 >
 
-                  <div className="flex justify-between text-sm border-t">
+                  <span className="font-medium">
+                    {categoria.nome}
+                  </span>
 
-                    <span>
-                      {categoria.nome}
-                    </span>
-
-                    <div className="text-right">
-                      <div>
-                        {formatCurrency(categoria.valor)}
-                      </div>
-
-                      <div className="text-xs text-slate-500">
-                        {percentual}%
-                      </div>
-                    </div>
-
-                  </div>
-
-                  <div className="w-full h-5 bg-slate-100 rounded-full overflow-hidden">
-
-                    <div
-                      className="
-                        h-full
-                        bg-gradient-to-r
-                        from-blue-600
-                        to-blue-400
-                        rounded-full
-                      "
-                      style={{width: `${percentual}%`,}}
-                    />
-
-                  </div>
+                  <span>
+                    {formatCurrency(categoria.valor)} ... [ {percentual.toFixed(1)}% ]
+                  </span>
 
                 </div>
-              );
-            }
-          )}
+
+                <div
+                  className="
+                    text-xs
+                    text-slate-500
+                    text-right
+                    mt-1
+                  "
+                >
+                  
+                </div>
+
+                <div
+                  className="
+                    w-full
+                    h-3
+                    bg-slate-200
+                    rounded-full
+                  "
+                >
+
+                  <div
+                    className="
+                      h-3
+                      bg-blue-500
+                      rounded-full
+                      transition-all
+                    "
+                    style={{
+                      width:
+                        `${percentual}%`,
+                    }}
+                  />
+
+                </div>
+
+                
+
+              </div>
+
+            );
+
+          })}
 
         </div>
 

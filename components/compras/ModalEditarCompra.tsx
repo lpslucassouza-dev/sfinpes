@@ -8,15 +8,11 @@ import { atualizarCompra } from "@/app/compras/actions";
 type Props = {
     
   compraId: number;
-
   descricao: string;
-
+  dataCompra: string;
   usuarioId: number;
-
   categoriaId: number;
-
   subCategoriaId: number | null;
-
   usuarios: {
     id: number;
     nome: string;
@@ -36,6 +32,7 @@ type Props = {
 export default function ModalEditarCompra({
   compraId,
   descricao,
+  dataCompra,
   usuarioId,
   categoriaId,
   subCategoriaId,
@@ -44,22 +41,12 @@ export default function ModalEditarCompra({
 }: Props) {
 
     const [open, setOpen] = useState(false);
-
     const router = useRouter();
-
-    const [descricaoAtual, setDescricaoAtual] =
-    useState(descricao);
-
-    const [usuarioAtual, setUsuarioAtual] =
-    useState(usuarioId);
-
-    const [categoriaAtual, setCategoriaAtual] =
-    useState(categoriaId);
-
-    const [subCategoriaAtual, setSubCategoriaAtual] =
-    useState<number | null>(
-        subCategoriaId
-    );
+    const [descricaoAtual, setDescricaoAtual] = useState(descricao);
+    const [dataCompraAtual, setDataCompraAtual] = useState(dataCompra.substring(0, 10));
+    const [usuarioAtual, setUsuarioAtual] = useState(usuarioId);
+    const [categoriaAtual, setCategoriaAtual] = useState(categoriaId);
+    const [subCategoriaAtual, setSubCategoriaAtual] = useState<number | null>(subCategoriaId);
 
     const categoriaSelecionada =
     categorias.find(
@@ -72,13 +59,13 @@ export default function ModalEditarCompra({
         await atualizarCompra(
             compraId,
             {
-            descricao: descricaoAtual,
-            usuarioId: usuarioAtual,
-            categoriaId: categoriaAtual,
-            subCategoriaId:
-                subCategoriaAtual,
+                descricao: descricaoAtual,
+                dataCompra: dataCompraAtual,
+                usuarioId: usuarioAtual,
+                categoriaId: categoriaAtual,
+                subCategoriaId: subCategoriaAtual,
             }
-        );
+            );
 
         setOpen(false);
 
@@ -156,6 +143,29 @@ export default function ModalEditarCompra({
                 "
                 />
             </div>
+
+            <div>
+                <label className="block text-sm mb-1">
+                    Data da Compra
+                </label>
+
+                <input
+                    type="date"
+                    value={dataCompraAtual}
+                    onChange={(e) =>
+                    setDataCompraAtual(
+                        e.target.value
+                    )
+                    }
+                    className="
+                    w-full
+                    border
+                    rounded-lg
+                    p-2
+                    "
+                />
+
+                </div>
 
             <div>
                 <label className="block text-sm mb-1">

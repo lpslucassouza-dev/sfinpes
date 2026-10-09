@@ -229,15 +229,11 @@ function ordenar(
       ? Math.abs(lucroTotal)
       : 0;
 
-  const proventos12m =
-    dados.indicadores?.proventos12m ?? 0;
+  const proventos12m = dados.indicadores?.proventos12m ?? 0;
 
-  const mediaMensal =
-    dados.indicadores?.mediaMensal ?? 0;
+  const mediaMensal = dados.indicadores?.mediaMensal ?? 0;
 
-  const ultimoMes =
-    dados.indicadores?.ultimoMes ?? 0;
-
+  const ultimoMes = dados.indicadores?.ultimoMes ?? 0;
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
@@ -358,12 +354,8 @@ function ordenar(
                 }
               )}
             </div>
-
           </div>
-
         </div>
-
-        
 
         <div
           className="
@@ -376,14 +368,7 @@ function ordenar(
           "
         >
 
-          <div
-            className="
-              flex
-              items-center
-              gap-2
-              mb-4
-            "
-          >
+          <div className="flex items-center gap-2 mb-4">
 
             <span className="text-xl">
               💵
@@ -546,6 +531,8 @@ function ordenar(
                   grupo.totalInvestido
                 ) * 100
               : 0;
+  
+  const usaValuation = grupo.tipo === "ACAO";            
       
       return (
           
@@ -790,7 +777,25 @@ function ordenar(
                             )
                           }
                       </th>
-                    )}  
+                    )} 
+
+                    {usaValuation && (
+                      <th className="p-3 text-center">
+                        Preço Justo
+                      </th>
+                    )}
+
+                    {usaValuation && (
+                      <th className="p-3 text-center">
+                        Upside
+                      </th>
+                    )} 
+
+                    
+
+                    <th className="p-3 text-center">
+                      Upside
+                    </th>
 
                     <th className="p-3 text-center">
                       Investido
@@ -924,6 +929,28 @@ function ordenar(
                           {valor(ativo.valorAtualCotacao)}
                         </td>
 
+                      )}
+
+
+
+                      {usaValuation && (
+
+                        <td className="p-3 text-center">
+                          {valor(ativo.precoJusto)}
+                        </td>
+
+                      )}
+
+                      {usaValuation && (
+                        <td
+                          className={`p-3 text-center ${
+                            ativo.upside >= 0
+                              ? "text-green-600"
+                              : "text-red-600"
+                          }`}
+                        >
+                          {Number(ativo.upside || 0).toFixed(2)}%
+                        </td>
                       )}
 
                       <td className="p-3 text-center">

@@ -16,7 +16,13 @@ export default function RendimentosPage() {
     const dataAtual = new Date().toISOString().split("T")[0];
     const [dataRecebimento, setDataRecebimento] = useState(dataAtual);
     const [valorTotal, setValorTotal] = useState("");
-    const [filtroMes, setFiltroMes] = useState("TODOS");
+    
+    const [filtroMes, setFiltroMes] =
+        useState(
+            `${new Date().getFullYear()}-${String(
+            new Date().getMonth() + 1
+            ).padStart(2, "0")}`
+    );
 
     const totalRecebido =
         rendimentos.reduce(
@@ -229,14 +235,50 @@ const mesesDisponiveis = [
     )
   ),
 ].sort().reverse();
+
+const hoje = new Date();
+
+const mesAtual = hoje.getMonth() + 1;
+const anoAtual = hoje.getFullYear();
+
+const rendimentosMedia =
+  rendimentos.filter((r) => {
+
+    const data =
+      new Date(r.dataRecebimento);
+
+    return !(
+      data.getMonth() + 1 === mesAtual &&
+      data.getFullYear() === anoAtual
+    );
+
+});
+
+const totalRecebidoMedia =
+  rendimentosMedia.reduce(
+    (acc, item) =>
+      acc + Number(item.valorTotal),
+    0
+  );
+
+const mesesUnicos =
+  new Set(
+    rendimentosMedia.map((item) => {
+
+      const data =
+        new Date(item.dataRecebimento);
+
+      return `${data.getFullYear()}-${data.getMonth() + 1}`;
+
+    })
+);
   
-const totalMeses =
-  mesesDisponiveis.length;
+const totalMeses = mesesDisponiveis.length;
 
 const mediaMensal =
-  totalMeses > 0
-    ? totalRecebido /
-      totalMeses
+  mesesUnicos.size > 0
+    ? totalRecebidoMedia /
+      mesesUnicos.size
     : 0;
 
 const patrimonioInvestido =

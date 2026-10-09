@@ -19,6 +19,8 @@ export async function GET() {
       }
 
     });
+
+  const valuations = await prisma.valuation.findMany();  
   
   const rendimentos = await prisma.assetIncome.findMany();
 
@@ -35,6 +37,26 @@ export async function GET() {
       calcularPosicaoAtual(
         asset.transactions
       );
+
+    const valuation =
+      valuations.find(
+        (v) =>
+          v.ticker ===
+          asset.ticker
+      );
+
+    const precoJusto = valuation?.precoJusto ?? 0;
+
+    const upside =
+      Number(asset.valorAtual) > 0
+        ? (
+            (
+              precoJusto -
+              Number(asset.valorAtual)
+            ) /
+            Number(asset.valorAtual)
+          ) * 100
+        : 0;
 
     if (
       posicao.quantidadeAtual <= 0
@@ -92,6 +114,8 @@ export async function GET() {
         quantidadeAtual: posicao.quantidadeAtual,
         precoMedio: posicao.precoMedio,
         valorAtualCotacao: asset.valorAtual || 0,
+        precoJusto: precoJusto ?? 0,
+        upside: upside ?? 0,
         valorInvestido,
         valorAtual,
         resultado,

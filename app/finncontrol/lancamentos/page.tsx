@@ -43,8 +43,8 @@ export default function LancamentosPage() {
   const total =
     (Number(quantidade) || 0) *
     (Number(valorUnitario) || 0);
-  const [mesFiltro, setMesFiltro] = useState(0);
-  const [anoFiltro, setAnoFiltro] = useState(0);
+  const [mesFiltro, setMesFiltro] = useState(new Date().getMonth() + 1);
+  const [anoFiltro, setAnoFiltro] = useState(new Date().getFullYear());
 
   async function loadTransactions() {
     const response = await fetch(
@@ -186,35 +186,46 @@ export default function LancamentosPage() {
   ];
 
   const transactionsFiltradas =
-    transactions.filter((tx) => {
+    transactions
+      .filter((tx) => {
 
-      const data =
-        new Date(tx.dataOperacao);
+        const data =
+          new Date(tx.dataOperacao);
 
-      const filtroMes =
-        mesFiltro === 0
-          ? true
-          : data.getMonth() + 1 ===
-            mesFiltro;
+        const filtroMes =
+          mesFiltro === 0
+            ? true
+            : data.getMonth() + 1 === mesFiltro;
 
-      const filtroAno =
-        anoFiltro === 0
-          ? true
-          : data.getFullYear() === anoFiltro;
+        const filtroAno =
+          anoFiltro === 0
+            ? true
+            : data.getFullYear() === anoFiltro;
 
-      const filtroAtivo =
-        ativoFiltro === ""
-          ? true
-          : tx.asset.ticker ===
-            ativoFiltro;
+        const filtroAtivo =
+          ativoFiltro === ""
+            ? true
+            : tx.asset.ticker === ativoFiltro;
 
-      return (
-        filtroMes &&
-        filtroAno &&
-        filtroAtivo
-      );
+        return (
+          filtroMes &&
+          filtroAno &&
+          filtroAtivo
+        );
 
-    });
+      })
+
+      .sort((a, b) => {
+
+        const dataA =
+          new Date(a.dataOperacao).getTime();
+
+        const dataB =
+          new Date(b.dataOperacao).getTime();
+
+        return dataA - dataB;
+
+      });
 
   const anosDisponiveis = [
     ...new Set(
@@ -295,6 +306,25 @@ export default function LancamentosPage() {
     TESOURO_DIRETO: "Tesouro",
     PREV_PRIVADA: "Previdência",
   };
+
+  function formatarData(
+    data: string
+  ) {
+
+    const iso =
+      new Date(data)
+        .toISOString()
+        .split("T")[0];
+
+    const [
+      ano,
+      mes,
+      dia,
+    ] = iso.split("-");
+
+    return `${dia}/${mes}/${ano}`;
+
+  }
 
   return (
     <div className="p-8">
@@ -572,9 +602,9 @@ export default function LancamentosPage() {
                 </td>
 
                 <td className="p-3 text-center">
-                  {new Date(
+                  {formatarData(
                     tx.dataOperacao
-                  ).toLocaleDateString()}
+                  )}
                 </td>
 
                 <td className="p-3 text-center">

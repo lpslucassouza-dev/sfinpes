@@ -38,7 +38,7 @@ export async function criarCompra(
           await tx.compra.create({
             data: {
               dataCompra: new Date(
-                dados.dataCompra
+                `${dados.dataCompra}T12:00:00`
               ),
 
               competenciaMes:
@@ -179,6 +179,7 @@ export async function atualizarCompra(
   compraId: number,
   dados: {
     descricao: string;
+    dataCompra: string;
     usuarioId: number;
     categoriaId: number;
     subCategoriaId?: number | null;
@@ -193,8 +194,8 @@ export async function atualizarCompra(
       descricao: dados.descricao,
       usuarioId: dados.usuarioId,
       categoriaId: dados.categoriaId,
-      subCategoriaId:
-        dados.subCategoriaId ?? null,
+      dataCompra: new Date(`${dados.dataCompra}T12:00:00`),
+      subCategoriaId: dados.subCategoriaId ?? null,
     },
   });
 
