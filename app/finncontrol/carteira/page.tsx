@@ -783,15 +783,7 @@ function ordenar(
                       <th className="p-3 text-center">
                         Preço Justo
                       </th>
-                    )}
-
-                    {usaValuation && (
-                      <th className="p-3 text-center">
-                        Upside
-                      </th>
-                    )} 
-
-                    
+                    )}                    
 
                     <th className="p-3 text-center">
                       Upside

@@ -1,6 +1,8 @@
 "use client";
 
+import GraficoEvolucao from "@/components/rendimentos/GraficoEvolucao";
 import { useEffect, useState } from "react";
+import { XAxis } from "recharts";
 
 export default function RendimentosPage() {
 
@@ -16,6 +18,7 @@ export default function RendimentosPage() {
     const dataAtual = new Date().toISOString().split("T")[0];
     const [dataRecebimento, setDataRecebimento] = useState(dataAtual);
     const [valorTotal, setValorTotal] = useState("");
+    const [carteira, setCarteira] = useState<any>(null);
     
     const [filtroMes, setFiltroMes] =
         useState(
@@ -43,9 +46,10 @@ export default function RendimentosPage() {
 
   async function carregar() {
 
-    const [r, a] = await Promise.all([
+    const [r, a, c] = await Promise.all([
       fetch("/api/rendimentos"),
       fetch("/api/assets"),
+      fetch("/api/carteira")
     ]);
 
     const rendimentosData =
@@ -54,6 +58,9 @@ export default function RendimentosPage() {
     const assetsData =
       await a.json();
 
+    const carteiraData =
+        await c.json();
+        
     setRendimentos(
       rendimentosData
     );
@@ -61,6 +68,12 @@ export default function RendimentosPage() {
     setAssets(
       assetsData
     );
+
+    setCarteira(
+        carteiraData
+    );
+
+    //console.log(assets);
   }
 
   async function salvar() {
@@ -275,12 +288,6 @@ const mesesUnicos =
   
 const totalMeses = mesesDisponiveis.length;
 
-const mediaMensal =
-  mesesUnicos.size > 0
-    ? totalRecebidoMedia /
-      mesesUnicos.size
-    : 0;
-
 const patrimonioInvestido =
   assets.reduce(
     (acc, asset) => {
@@ -334,6 +341,78 @@ const resumoMensal =
     )
   );
 
+  const historicoAnual =
+    rendimentos.reduce(
+        (acc: any, r: any) => {
+
+        const data =
+            new Date(
+            r.dataRecebimento
+            );
+
+        const ano =
+            data.getFullYear();
+
+        const mes =
+            data.getMonth();
+
+        if (!acc[ano]) {
+
+            acc[ano] = {
+            ano,
+
+            meses: Array(12).fill(0),
+
+            total: 0,
+            };
+
+        }
+
+        acc[ano].meses[mes] +=
+            r.valorTotal;
+
+        acc[ano].total +=
+            r.valorTotal;
+
+        return acc;
+
+        },
+
+        {}
+    );
+
+    const historicoTabela =
+        Object.values(
+            historicoAnual
+        )
+        .sort(
+            (a: any, b: any) =>
+            b.ano - a.ano
+        );
+
+  const evolucaoMensal =
+    resumoMensal
+        .sort(
+        (a: any, b: any) =>
+            a.mes.localeCompare(
+            b.mes
+            )
+        )
+        .slice(-12);
+
+    const totalRecebido12Meses =
+        evolucaoMensal.reduce(
+        (acc: number, mes: any) =>
+            acc + mes.total,
+        0
+        );
+
+    const mediaMensal =
+        evolucaoMensal.length > 0
+            ? totalRecebido12Meses /
+            evolucaoMensal.length
+            : 0;
+
   function formatarMes(
     referencia: string
     ) {
@@ -359,6 +438,107 @@ const resumoMensal =
     return `${meses[Number(mes) - 1]}/${ano}`;
 
     }
+
+    const dadosGrafico =
+        evolucaoMensal.map(
+            (item: any) => {
+
+            const [
+                ano,
+                mes,
+            ] = item.mes.split("-");
+
+            const meses = [
+                "Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez",
+            ];
+
+            return {
+                mes:
+                    `${meses[
+                    Number(mes) - 1
+                    ]}/${ano.slice(-2)}`,
+                valor:
+                    item.total,
+                media: 
+                    mediaMensal,
+                };
+
+            }
+        );
+    const rendimentosFiisMes =
+        rendimentos.filter(
+            (r) => {
+
+            const data =
+                new Date(
+                r.dataRecebimento
+                );
+
+            return (
+                r.asset?.tipo === "FII" &&
+                data.getMonth() + 1 === mesAtual &&
+                data.getFullYear() === anoAtual
+            );
+
+            }
+        );
+
+    const totalRendimentosFiisMes =
+        rendimentosFiisMes.reduce(
+            (acc, item) =>
+            acc + item.valorTotal,
+            0
+        );
+
+    const tickersFiisMes =
+        [
+            ...new Set(
+            rendimentosFiisMes.map(
+                (r) =>
+                r.asset?.ticker
+            )
+            ),
+        ];
+
+    const fiisCarteira =
+    (
+        carteira?.grupos?.find(
+        (g: any) =>
+            g.tipo === "FII"
+        )?.ativos ?? []
+    ).filter(
+        (ativo: any) =>
+        tickersFiisMes.includes(
+            ativo.ticker
+        )
+    );
+        
+    const baseInvestidaFiis =
+        fiisCarteira.reduce(
+            (
+            acc: number,
+            ativo: any
+            ) =>
+            acc +
+            (
+                Number(
+                ativo.quantidadeAtual
+                ) *
+                Number(
+                ativo.precoMedio
+                )
+            ),
+            0
+        );
+
+    const dyMesFiis =
+        baseInvestidaFiis > 0
+            ? (
+                totalRendimentosFiisMes *
+                100
+            ) /
+            baseInvestidaFiis
+            : 0;
 
   return (
 
@@ -393,107 +573,329 @@ const resumoMensal =
 
         </div>
 
-        <div className="grid md:grid-cols-4 gap-4 mb-8">
+        <div
+            className="
+                grid
+                lg:grid-cols-4
+                gap-6
+                mb-8
+            "
+        >
 
-            <div className="
-                border
-                rounded-xl
-                p-4
-                bg-green-50
+            <div
+                className="
+                    bg-white
+                    rounded-xl
+                    border
+                    p-6
+                    h-full
                 "
             >
-                <p className="text-sm text-blue-800">
-                    Total Recebido
-                </p>
-
-                <h2 className="text-2xl font-bold text-right">
-                    {moeda(totalRecebidoFiltro)}
-                </h2>
-            </div>
-
-            <div className="border rounded-xl p-4 bg-white">
-
-                <p className="text-sm text-blue-800">
-                Recebido Ações
-                </p>
-
-                <h2 className="text-2xl font-bold text-right">
-                    {moeda(recebidoAcoes)}
+                <h2
+                    className="
+                        text-xl
+                        font-semibold
+                        mb-6
+                    "
+                    >
+                    Resumo
                 </h2>
 
-            </div>
 
-            <div className="border rounded-xl p-4 bg-white">
+            <div className="mb-6">
 
-                <p className="text-sm text-blue-800">
-                Recebido FIIs
-                </p>
+                <div className="text-sm text-slate-500">
+                    Média Mensal (12 Meses)
+                </div>
 
-                <h2 className="text-2xl font-bold text-right">
-                    {moeda(recebidoFiis)}
-                </h2>
+                <div className="text-3xl text-right font-bold">
 
-            </div>
-
-            <div className="border rounded-xl p-4 bg-white">
-
-                <p className="text-sm text-blue-800">
-                    Média Mensal
-                </p>
-
-                <h2 className="text-2xl font-bold text-right">
                     {moeda(mediaMensal)}
-                </h2>
-
-            </div>
-
-            {/* -- mostrar card de DYOC
-
-            <div className="border rounded-xl p-4 bg-white">
-
-                <p className="text-sm text-gray-500">
-                    Yield on Cost
-                </p>
-
-                <h2 className="text-2xl font-bold">
-                    {yieldOnCost.toFixed(2)}%
-                </h2>
-
-            </div>
-            */}
-        </div>
-
-        <div className="border rounded-xl bg-white p-1 mb-3">
-
-            <h2 className="font-bold mb-1">
-                Resumo Mensal
-            </h2>
-
-            <div className="flex justify-center gap-5">
-
-                {resumoMensal
-                    .slice(0, 3)
-                    .map(
-                            (mes: any) => (
-
-                <div key={mes.mes}
-                    className="border rounded-lg p-2">
-
-                    <div className="justify-center text-slate-500">
-                        {formatarMes(mes.mes)}
-                    </div>
-
-                    <div className="text-2xl font-bold text-blue-700 mt-2 justify-center">
-                        {moeda(mes.total)}
-                    </div>
 
                 </div>
 
-                ))}
+            </div>
+
+            <div className="mb-6">
+
+                <div className="text-sm text-slate-500">
+                    Total Recebido (12 Meses)
+                </div>
+
+                <div className="text-2xl text-right font-semibold">
+                    {moeda(totalRecebido12Meses)}
+                </div>
 
             </div>
 
+            <div className="mb-6">
+
+                <div className="text-sm text-slate-500">
+                    Recebido Ações (Mês)
+                </div>
+
+                <div className="text-xl text-right font-medium">
+
+                    {moeda(recebidoAcoes)}
+
+                </div>
+
+            </div>
+
+            <div className="mb-6">
+
+                <div className="text-sm text-slate-500">
+                    Recebido FIIs (Mês)
+                </div>
+
+                <div className="text-xl text-right font-medium">
+
+                    {moeda(recebidoFiis)}
+
+                </div>
+            </div>
+
+            <div className="mb-6">
+
+                <div className="text-sm text-slate-500">
+                    DY FIIs (Mês)
+                </div>
+
+                <div className="text-xl text-xl
+                    font-bold
+                    text-green-600
+                    text-right font-medium">
+
+                   {dyMesFiis.toFixed(2)}%
+
+                </div>
+            </div>
+        </div>                
+    
+
+        <div
+            className="
+                lg:col-span-3
+                bg-white
+                rounded-xl
+                border
+                p-6
+            "
+            >
+                
+            <GraficoEvolucao
+                dados={dadosGrafico}
+                media={mediaMensal}
+            />
+
         </div>
+
+        </div>
+
+        <div
+            className="
+                bg-white
+                border
+                rounded-xl
+                overflow-hidden
+                mb-8
+            "
+            >
+
+            <div className="p-4">
+
+                <h2
+                className="
+                    text-xl
+                    font-semibold
+                "
+                >
+                Histórico Mensal
+                </h2>
+
+            </div>
+
+            <table
+                className="
+                w-full
+                text-sm
+                text-center
+                "
+            >
+
+                <thead>
+
+                <tr
+                    className="
+                    bg-slate-100
+                    border-t
+                    "
+                >
+
+                    <th
+                        className="
+                            p-3
+                            text-center
+                            whitespace-nowrap
+                        "
+                        >
+                    Ano
+                    </th>
+
+                    <th>Jan</th>
+                    <th>Fev</th>
+                    <th>Mar</th>
+                    <th>Abr</th>
+                    <th>Mai</th>
+                    <th>Jun</th>
+                    <th>Jul</th>
+                    <th>Ago</th>
+                    <th>Set</th>
+                    <th>Out</th>
+                    <th>Nov</th>
+                    <th>Dez</th>
+
+                    <th
+                        className="
+                            bg-blue-50
+                            text-blue-700
+                            font-semibold
+                        "
+                        >
+                        Média
+                        </th>
+
+                    <th
+                        className="
+                            bg-green-50
+                            text-green-700
+                            font-semibold
+                        "
+                        >
+                        Total
+                        </th>
+
+                </tr>
+
+                </thead>
+
+                <tbody>
+
+                {historicoTabela.map(
+                    (linha: any) => {
+
+                    const mesesComValor =
+                        linha.meses.filter(
+                        (valor: number) =>
+                            valor > 0
+                        ).length;
+
+                    const media =
+                        mesesComValor > 0
+                        ? linha.total /
+                            mesesComValor
+                        : 0;
+
+                    return (
+
+                        <tr
+                        key={linha.ano}
+                        className="border-t"
+                        >
+
+                        <td
+                            className="
+                            p-3
+                            font-bold
+                            "
+                        >
+                            {linha.ano}
+                        </td>
+
+                        {linha.meses.map(
+                            (
+                            valor: number,
+                            index: number
+                            ) => (
+
+                            <td
+                                key={index}
+                                className={`
+                                    p-3
+                                    text-center
+                                    whitespace-nowrap
+                                    ${
+                                    valor === 0
+                                        ? "text-slate-300"
+                                        : ""
+                                    }
+                                `}
+                                >
+
+                                {valor.toLocaleString(
+                                "pt-BR",
+                                {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                }
+                                )}
+
+                            </td>
+
+                            )
+                        )}
+
+                        <td
+                            className="
+                                text-center
+                                font-semibold
+                                bg-blue-50
+                                text-blue-700
+                            "
+                            >
+
+                            {media.toLocaleString(
+                            "pt-BR",
+                            {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                            }
+                            )}
+
+                        </td>
+
+                        <td
+                            className="
+                                text-center
+                                font-bold
+                                bg-green-50
+                                text-green-700
+                            "
+                            >
+
+
+                            {linha.total.toLocaleString(
+                            "pt-BR",
+                            {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                            }
+                            )}
+
+                        </td>
+
+                        </tr>
+
+                    );
+
+                    }
+                )}
+
+                </tbody>
+
+            </table>
+
+            </div>
 
         <div className="flex gap-3 justify-center mb-6 flex-wrap">
 
