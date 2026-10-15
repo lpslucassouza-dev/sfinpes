@@ -14,7 +14,7 @@ export default function ValuationTable({
     useState("");
 
   const [sortField, setSortField] =
-    useState("upsideDownside");
+    useState("upside");
 
   const [sortDirection, setSortDirection] =
     useState<"asc" | "desc">(
@@ -231,7 +231,7 @@ export default function ValuationTable({
             <th
               onClick={() =>
                 handleSort(
-                  "upsideDownside"
+                  "upside"
                 )
               }
               className="
@@ -243,7 +243,7 @@ export default function ValuationTable({
             >
               Upside
               {sortField ===
-                "upsideDownside" &&
+                "upside" &&
                 (
                   sortDirection ===
                   "asc"
@@ -336,17 +336,17 @@ export default function ValuationTable({
 
                 <td
                   className={
-                    valuation.upsideDownside >=
+                    valuation.upside >=
                     0
                       ? "px-4 py-3 text-right font-medium text-green-600"
                       : "px-4 py-3 text-right font-medium text-red-600"
                   }
                 >
-                  {valuation.upsideDownside >
+                  {valuation.upside >
                   0
                     ? "+"
                     : ""}
-                  {valuation.upsideDownside.toFixed(
+                  {valuation.upside.toFixed(
                     2
                   )}
                   %

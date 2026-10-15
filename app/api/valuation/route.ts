@@ -17,36 +17,14 @@ export async function POST(
       await prisma.valuation.create({
         data: {
           ticker: body.ticker,
-
-          precoAtual:
-            body.precoAtual,
-
-          precoJusto:
-            body.precoJusto,
-
-          upsideDownside:
-            body.upsideDownside,
-
-          totalAcoes:
-            BigInt(body.totalAcoes),
-
-          payout:
-            body.payout,
-
-          roe:
-            body.roe,
-
-          taxaDesconto:
-            body.taxaDesconto,
-
-          taxaDescontoPerpetua:
-            body.taxaDescontoPerpetua,
-
-          crescimentoPerpetuo:
-            body.crescimentoPerpetuo,
-
-          marketCapProjetado:
-            body.marketCapProjetado,
+          precoJusto: body.precoJusto,
+          totalAcoes: BigInt(body.totalAcoes),
+          payout: body.payout,
+          roe: body.roe,
+          taxaDesconto: body.taxaDesconto,
+          taxaDescontoPerpetua: body.taxaDescontoPerpetua,
+          crescimentoPerpetuo: body.crescimentoPerpetuo,
+          marketCapProjetado: body.marketCapProjetado,
         },
       });
 

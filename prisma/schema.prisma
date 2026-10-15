@@ -182,9 +182,9 @@ model LancamentoContaCorrente {
 model Valuation {
   id                   String   @id @default(cuid())
   ticker               String
-  precoAtual           Float
+  precoAtual           Float?
   precoJusto           Float
-  upsideDownside       Float
+  upsideDownside       Float?
   totalAcoes           BigInt
   payout               Float
   roe                  Float

@@ -11,12 +11,44 @@ export default async function AcoesPage() {
     redirect("/login");
   }
 
-  const valuations =
-    await prisma.valuation.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+  const valuations = await prisma.valuation.findMany();
+
+  const ativos = await prisma.asset.findMany({
+    where: {
+      tipo: "ACAO",
+    },
+  });
+
+  const ativosMap = new Map(
+    ativos.map((ativo) => [ativo.ticker, ativo])
+  );
+
+  const ranking = valuations.map((valuation) => {
+    const ativo = ativosMap.get(valuation.ticker);
+
+    const precoAtual = Number(ativo?.valorAtual ?? 0);
+
+    const precoJusto = Number(
+      valuation.precoJusto ?? 0
+    );
+
+    const upside =
+      precoAtual > 0
+        ? ((precoJusto - precoAtual) /
+            precoAtual) *
+          100
+        : 0;
+
+    return {
+      ...valuation,
+      precoAtual,
+      upside,
+    };
+  });
+
+  const rankingOrdenado = ranking.sort(
+    (a, b) => b.upside - a.upside
+  );
 
   return (
     
@@ -55,7 +87,7 @@ export default async function AcoesPage() {
       </div>
 
       <ValuationTable
-        valuations={valuations}
+        valuations={rankingOrdenado}
       />
     </main>
   );

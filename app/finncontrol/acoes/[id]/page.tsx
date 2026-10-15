@@ -101,15 +101,15 @@ ValuationDetailsPage({
 
         <div
           className={
-            valuation.upsideDownside >= 0
+            (valuation.upsideDownside ?? 0) >= 0
               ? "mt-4 text-4xl font-bold text-green-600"
               : "mt-4 text-4xl font-bold text-red-600"
           }
         >
-          {valuation.upsideDownside > 0
+          {(valuation.upsideDownside ?? 0) > 0
             ? "+"
             : ""}
-          {valuation.upsideDownside.toFixed(2)}%
+          (valuation.upsideDownside ?? 0).toFixed(2)%
         </div>
 
         <div className="text-sm text-slate-500">
@@ -153,10 +153,11 @@ ValuationDetailsPage({
 
           <Card
             title="Upside"
-            value={`${valuation.upsideDownside.toFixed(
+            value={`${(valuation.upsideDownside ?? 0).toFixed(
               2
             )}%`}
           />
+
 
           <Card
             title="Market Cap Projetado"

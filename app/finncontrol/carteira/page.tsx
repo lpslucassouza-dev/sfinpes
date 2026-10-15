@@ -236,7 +236,7 @@ function ordenar(
   const ultimoMes = dados.indicadores?.ultimoMes ?? 0;
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="p-8 max-w-[1800px] mx-auto">
 
       <h1 className="text-3xl font-bold">
         Minha Carteira
@@ -263,11 +263,11 @@ function ordenar(
     </div>
       <div
         className="
-          mt-4
-          mb-8
-          flex
-          gap-4
-          flex-wrap
+          mt-2
+          mb-6
+          grid
+          lg:grid-cols-3
+          gap-6
         "
       >
 
@@ -277,9 +277,8 @@ function ordenar(
             bg-white
             border
             rounded-2xl
-            p-6
+            p-4
             shadow-sm
-            w-[380px]
           "
         >
 
@@ -288,7 +287,7 @@ function ordenar(
               flex
               items-center
               gap-2
-              mb-4
+              mb-2
             "
           >
             <span>💰</span>
@@ -303,7 +302,7 @@ function ordenar(
             className="
               flex
               items-center
-              gap-4
+              gap-6
             "
           >
 
@@ -339,13 +338,13 @@ function ordenar(
 
           </div>
 
-          <div className="mt-4">
+          <div className="mt-6">
 
             <div className="text-sm text-slate-500">
               Valor Investido
             </div>
 
-            <div className="text-xl font-semibold">
+            <div className="text-2xl font-semibold">
               {totalInvestido.toLocaleString(
                 "pt-BR",
                 {
@@ -364,7 +363,6 @@ function ordenar(
             rounded-2xl
             p-6
             shadow-sm
-            w-[380px]
           "
         >
 
@@ -417,12 +415,8 @@ function ordenar(
               </div>
 
             </div>
-
           </div>
-
         </div>
-
-
 
         <div
           className="
@@ -431,7 +425,6 @@ function ordenar(
             rounded-2xl
             p-6
             shadow-sm
-            w-[400px]
           "
         >
 
@@ -566,7 +559,7 @@ function ordenar(
 
             {/* Lado Esquerdo */}
 
-            <div className="flex items-center gap-4 w-[320px]">
+            <div className="flex items-center gap-4 min-w-[240px]">
 
               <div
                 className="
@@ -598,7 +591,7 @@ function ordenar(
             <div
               className="
                 grid
-                grid-cols-[120px_130px_130px_130px_130px_30px]
+                grid-cols-[120px_170px_170px_170px_140px_40px]
                 items-right
                 text-right
                 gap-4
