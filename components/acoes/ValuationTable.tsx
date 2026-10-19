@@ -336,19 +336,15 @@ export default function ValuationTable({
 
                 <td
                   className={
-                    valuation.upside >=
-                    0
+                    valuation.upside >= 0
                       ? "px-4 py-3 text-right font-medium text-green-600"
                       : "px-4 py-3 text-right font-medium text-red-600"
                   }
                 >
-                  {valuation.upside >
-                  0
+                  {valuation.upside > 0
                     ? "+"
                     : ""}
-                  {valuation.upside.toFixed(
-                    2
-                  )}
+                  {valuation.upside.toFixed(2)}
                   %
                 </td>
 

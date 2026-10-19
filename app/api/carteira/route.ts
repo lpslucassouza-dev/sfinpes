@@ -111,6 +111,7 @@ export async function GET() {
         ticker: asset.ticker,
         nome: asset.nome,
         segmento: asset.segmento || "-",
+        setor: asset.setor || "-",
         quantidadeAtual: posicao.quantidadeAtual,
         precoMedio: posicao.precoMedio,
         valorAtualCotacao: asset.valorAtual || 0,

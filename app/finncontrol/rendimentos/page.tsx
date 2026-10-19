@@ -96,13 +96,9 @@ export default function RendimentosPage() {
         },
 
         body: JSON.stringify({
-
             assetId,
-
             tipoRendimento,
-
             dataRecebimento,
-
             valorTotal:
                 parseFloat(
                     String(valorTotal)
@@ -114,13 +110,9 @@ export default function RendimentosPage() {
     );
 
     setOpen(false);
-
     setAssetId("");
-
     setValorTotal("");
-
     setDataRecebimento("");
-
     carregar();
     }
 
@@ -257,8 +249,7 @@ const anoAtual = hoje.getFullYear();
 const rendimentosMedia =
   rendimentos.filter((r) => {
 
-    const data =
-      new Date(r.dataRecebimento);
+    const data = new Date(`${r.dataRecebimento}T12:00:00`);
 
     return !(
       data.getMonth() + 1 === mesAtual &&
@@ -278,10 +269,9 @@ const mesesUnicos =
   new Set(
     rendimentosMedia.map((item) => {
 
-      const data =
-        new Date(item.dataRecebimento);
+        const data = new Date(`${item.dataRecebimento}T12:00:00`);
 
-      return `${data.getFullYear()}-${data.getMonth() + 1}`;
+        return `${data.getFullYear()}-${data.getMonth() + 1}`;
 
     })
 );

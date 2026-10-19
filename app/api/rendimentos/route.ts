@@ -43,6 +43,11 @@ export async function POST(
       valorTotal
     );
 
+  const dataRecebimento = new Date(
+    `${body.dataRecebimento}T12:00:00`
+  );
+
+
   const rendimento =
     await prisma.assetIncome.create({
 
@@ -57,10 +62,7 @@ export async function POST(
         tipoRendimento:
           body.tipoRendimento,
 
-        dataRecebimento:
-          new Date(
-            body.dataRecebimento
-          ),
+        dataRecebimento,
 
         quantidadeCotas:
           dados.quantidadeCotas,

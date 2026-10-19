@@ -557,7 +557,27 @@ export default function AtivosPage() {
 
                     </div>
 
-                    )}
+                  )}
+
+                  {tipo === "ETF" && (
+
+                    <div>
+
+                      <label>
+                        Segmento
+                      </label>
+
+                      <input
+                        value={segmento}
+                        onChange={(e) =>
+                          setSegmento(e.target.value)
+                        }
+                        className="w-full border rounded p-2"
+                      />
+
+                    </div>
+
+                  )}
 
               </div>
 

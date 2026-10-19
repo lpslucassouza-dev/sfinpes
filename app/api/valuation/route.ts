@@ -17,7 +17,9 @@ export async function POST(
       await prisma.valuation.create({
         data: {
           ticker: body.ticker,
+          precoAtual: body.precoAtual,
           precoJusto: body.precoJusto,
+          upsideDownside: body.upsideDownside,
           totalAcoes: BigInt(body.totalAcoes),
           payout: body.payout,
           roe: body.roe,

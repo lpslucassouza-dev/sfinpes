@@ -729,7 +729,9 @@ function ordenar(
 
                     {!usaValorManual && (
                       <th className="p-3 text-left">
-                        Segmento
+                        {grupo.tipo === "ACAO"
+                          ? "Setor"
+                          : "Segmento"}
                       </th>
                     )}
 
@@ -773,14 +775,16 @@ function ordenar(
                     )} 
 
                     {usaValuation && (
-                      <th className="p-3 text-center">
-                        Preço Justo
-                      </th>
-                    )}                    
+                      <>
+                        <th className="p-3 text-center">
+                          Preço Justo
+                        </th>
 
-                    <th className="p-3 text-center">
-                      Upside
-                    </th>
+                        <th className="p-3 text-center">
+                          Upside
+                        </th>
+                      </>
+                    )}
 
                     <th className="p-3 text-center">
                       Investido
@@ -896,8 +900,11 @@ function ordenar(
 
                       {!usaValorManual && (
                         <td className="p-3">
-                          {ativo.segmento}
-                        </td>
+                        {grupo.tipo === "ACAO"
+                          ? ativo.setor || "-"
+                          : ativo.segmento || "-"
+                        }
+                      </td>
                       )}
                       
                       <td className="p-3 text-center">
@@ -916,26 +923,24 @@ function ordenar(
 
                       )}
 
-
-
                       {usaValuation && (
+                        <>
+                          <td className="p-3 text-center">
+                            {valor(ativo.precoJusto)}
+                          </td>
 
-                        <td className="p-3 text-center">
-                          {valor(ativo.precoJusto)}
-                        </td>
-
-                      )}
-
-                      {usaValuation && (
-                        <td
-                          className={`p-3 text-center ${
-                            ativo.upside >= 0
-                              ? "text-green-600"
-                              : "text-red-600"
-                          }`}
-                        >
-                          {Number(ativo.upside || 0).toFixed(2)}%
-                        </td>
+                          <td
+                            className={`p-3 text-center ${
+                              ativo.upside >= 0
+                                ? "text-green-600"
+                                : "text-red-600"
+                            }`}
+                          >
+                            {Number(
+                              ativo.upside || 0
+                            ).toFixed(2)}%
+                          </td>
+                        </>
                       )}
 
                       <td className="p-3 text-center">
