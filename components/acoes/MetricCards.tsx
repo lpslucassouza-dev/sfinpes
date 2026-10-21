@@ -41,7 +41,7 @@ export default function MetricCards({
     {
       title: "P/L",
       editable: false,
-      value: pl,
+      value: pl.toFixed(2),
     },
 
     {

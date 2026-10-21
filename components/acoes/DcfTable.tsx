@@ -12,13 +12,9 @@ type Props = {
   >;
 
   calculatedRows?: any[];
-
   valorTerminal: number;
-
   vplPerpetuo: number;
-
   crescimentoPerpetuo: number;
-
   taxaCrescimento: number;
 
   setCrescimentoPerpetuo: (
@@ -65,32 +61,27 @@ function handleLucroChange(
       row => row.ano === currentYear
     );
 
-  if (
-      index === currentIndex &&
-      updated[currentIndex + 1] &&
-      updated[currentIndex + 2]
+  if (index === currentIndex) {
+
+    let lucroProjetado = value;
+
+    for (
+      let i = currentIndex + 1;
+      i < updated.length;
+      i++
     ) {
 
-    updated[currentIndex + 1].lucroLiquido =
-        value *
-        (
-          1 +
-          taxaCrescimento / 100
-        );
+      lucroProjetado =
+        lucroProjetado *
+        (1 + taxaCrescimento / 100);
 
-      updated[currentIndex + 1].crescimento =
-        taxaCrescimento;
+      updated[i].lucroLiquido =
+        lucroProjetado;
 
-      updated[currentIndex + 2].lucroLiquido =
-        updated[currentIndex + 1].lucroLiquido *
-        (
-          1 +
-          taxaCrescimento / 100
-        );
-
-      updated[currentIndex + 2].crescimento =
+      updated[i].crescimento =
         taxaCrescimento;
     }
+  }
 
   setRows(updated);
 }
@@ -225,23 +216,37 @@ function formatInteger(
                       <td className="px-6 py-4 text-right">
 
                             <input
-                              type="number"
-                              value={row.lucroLiquido}
-                              onChange={(e) =>
-                              handleLucroChange(
-                                index,
-                                Number(e.target.value.replace(",", "."))
-                                )
-                            }
-                            className="
-                              w-52
-                              rounded-md
-                              bg-white
-                              px-2
-                              py-1
-                              text-right
-                            "
-                          />
+                              type="text"
+                              value={row.lucroLiquido.toLocaleString(
+                                "pt-BR",
+                                {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                }
+                              )}
+                              onChange={(e) => {
+
+                                const valor =
+                                  Number(
+                                    e.target.value
+                                      .replace(/\./g, "")
+                                      .replace(",", ".")
+                                  );
+
+                                handleLucroChange(
+                                  index,
+                                  valor
+                                );
+                              }}
+                              className="
+                                w-52
+                                rounded-md
+                                bg-white
+                                px-2
+                                py-1
+                                text-right
+                              "
+                            />
 
                       </td>
 
@@ -258,7 +263,7 @@ function formatInteger(
                               )
                             }
                             className="
-                            w-24
+                            w-28
                             rounded-md
                             bg-white
                             px-2

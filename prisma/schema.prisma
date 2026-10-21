@@ -192,6 +192,16 @@ model Valuation {
   taxaDescontoPerpetua Float
   crescimentoPerpetuo  Float
   marketCapProjetado   Float
+    // Bazin
+  dpa                  Float?
+  dividendYieldDesejado Float?
+  precoTetoBazin       Float?
+  margemSegurancaBazin Float?
+  // Graham
+  lpa                  Float?
+  vpa                  Float?
+  precoTetoGraham      Float?
+  margemSegurancaGraham Float?
   observacoes          String?
   createdAt            DateTime @default(now())
 }

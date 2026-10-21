@@ -59,6 +59,7 @@ export default function PremissasCard({
         <div className="flex items-center gap-2">
           <input value={payout}
                   type="number"
+                  step="0.01"
                   onChange={(e)=>
                     setPayout(
                       Number(e.target.value.replace(",", "."))
@@ -86,6 +87,7 @@ export default function PremissasCard({
         <div className="flex items-center gap-2">
           <input value={roe}
                   type="number"
+                  step="0.01"
                   onChange={(e)=>
                     setRoe(
                       Number(e.target.value.replace(",", "."))
@@ -133,7 +135,10 @@ export default function PremissasCard({
         <span className="text-sm text-slate-700">Taxa de Desconto</span>
         
         <div className="flex items-center gap-2">
-          <input value={taxaDesconto}
+          <input 
+                  type="number"
+                  step="0.01"
+                  value={taxaDesconto}
                   onChange={(e)=>
                     setTaxaDesconto(
                       Number(e.target.value.replace(",", "."))

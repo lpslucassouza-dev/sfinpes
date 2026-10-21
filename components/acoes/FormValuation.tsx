@@ -10,6 +10,7 @@ import { useState } from "react";
 import { ValuationService } from "@/lib/valuation/services";
 import EmpresaInfoCard from "./EmpresaInfoCard";
 import Link from "next/link";
+import BazinGrahamCards from "./BazinGrahamCards";
 
 export default function FormValuation() {
 
@@ -30,38 +31,48 @@ const [max52, setMax52] = useState(0);
 const [min52, setMin52] = useState(0);
 
 const [dcfRows, setDcfRows] =
-    useState([
-      {
-        ano: currentYear - 3,
-        lucroLiquido: 0,
-        crescimento: 0,
-      },
-      {
-        ano: currentYear - 2,
-        lucroLiquido: 0,
-        crescimento: 0,
-      },
-      {
-        ano: currentYear - 1,
-        lucroLiquido: 0,
-        crescimento: 0,
-      },
-      {
-        ano: currentYear,
-        lucroLiquido: 0,
-        crescimento: 0,
-      },
-      {
-        ano: currentYear + 1,
-        lucroLiquido: 0,
-        crescimento: 0,
-      },
-      {
-        ano: currentYear + 2,
-        lucroLiquido: 0,
-        crescimento: 0,
-      },
-    ]);
+  useState([
+    {
+      ano: currentYear - 3,
+      lucroLiquido: 0,
+      crescimento: 0,
+    },
+    {
+      ano: currentYear - 2,
+      lucroLiquido: 0,
+      crescimento: 0,
+    },
+    {
+      ano: currentYear - 1,
+      lucroLiquido: 0,
+      crescimento: 0,
+    },
+    {
+      ano: currentYear,
+      lucroLiquido: 0,
+      crescimento: 0,
+    },
+    {
+      ano: currentYear + 1,
+      lucroLiquido: 0,
+      crescimento: 0,
+    },
+    {
+      ano: currentYear + 2,
+      lucroLiquido: 0,
+      crescimento: 0,
+    },
+    {
+      ano: currentYear + 3,
+      lucroLiquido: 0,
+      crescimento: 0,
+    },
+    {
+      ano: currentYear + 4,
+      lucroLiquido: 0,
+      crescimento: 0,
+    },
+  ]);
 
   const marketCap =
     ValuationService.calculateMarketCap(
@@ -89,13 +100,12 @@ const [dcfRows, setDcfRows] =
 
   function handleReset() {
     setPrecoAtual(0);
-
     setTotalAcoes(0);
-
     setPayout(0);
-
     setRoe(0);
-
+    setDpa(0);
+    setDividendYieldDesejado(6);
+    setVpa(0);
     setDcfRows(
       dcfRows.map((row) => ({
         ...row,
@@ -151,29 +161,24 @@ async function handleSave() {
 
         body: JSON.stringify({
           ticker,
-
           precoAtual,
-
-          precoJusto:
-            valuation.precoJusto,
-
-          upsideDownside:
-            valuation.upsideDownside,
-
+          precoJusto: valuation.precoJusto,
+          upsideDownside: valuation.upsideDownside,
           totalAcoes,
-
           payout,
-
           roe,
-
           taxaDesconto,
-
           taxaDescontoPerpetua,
-
           crescimentoPerpetuo,
-
-          marketCapProjetado:
-            valuation.marketCapProjetado,
+          marketCapProjetado: valuation.marketCapProjetado,
+          dpa,
+          dividendYieldDesejado,
+          precoTetoBazin,
+          margemSegurancaBazin,
+          lpa,
+          vpa,
+          precoTetoGraham,
+          margemSegurancaGraham,
         }),
       }
     );
@@ -274,6 +279,8 @@ async function handleSearchTicker() {
       stock.earningsPerShare ?? 0
     );
 
+    console.log(stock);
+
     setMax52(
       stock.fiftyTwoWeekHigh ?? 0
     );
@@ -307,14 +314,48 @@ async function handleSearchTicker() {
   }
 }
 
+const [dpa, setDpa] = useState(0);
 
-//console.log("valuation", valuation);
-//console.log("valuation completo", valuation);
-//console.log("rows",dcfRows);
-//console.log(Object.keys(valuation));  
-//console.log("nomeEmpresa:",nomeEmpresa);
+const [
+  dividendYieldDesejado,
+  setDividendYieldDesejado,
+] = useState(6);
 
+const [vpa, setVpa] = useState(0);
 
+const precoTetoBazin =
+  dividendYieldDesejado > 0
+    ? (dpa / dividendYieldDesejado) * 100
+    : 0;
+
+const margemSegurancaBazin =
+  precoAtual > 0
+    ? (
+        (
+          precoTetoBazin -
+          precoAtual
+        ) /
+        precoAtual
+      ) * 100
+    : 0;
+
+ const precoTetoGraham =
+  vpa > 0 && lpa > 0
+    ? Math.sqrt(
+        lpa * vpa * 22.5
+      )
+    : 0;
+
+const margemSegurancaGraham =
+  precoAtual > 0
+    ? (
+        (
+          precoTetoGraham -
+          precoAtual
+        ) /
+        precoAtual
+      ) * 100
+    : 0;
 
 
   return (
@@ -375,6 +416,35 @@ async function handleSearchTicker() {
           roe={roe}
           pl={pl}
         />
+
+        <BazinGrahamCards
+            dpa={dpa}
+            setDpa={setDpa}
+
+            dividendYieldDesejado={
+              dividendYieldDesejado
+            }
+            setDividendYieldDesejado={
+              setDividendYieldDesejado
+            }
+
+            lpa={lpa}
+
+            vpa={vpa}
+            setVpa={setVpa}
+
+            precoTetoBazin={precoTetoBazin}
+            margemSegurancaBazin={
+              margemSegurancaBazin
+            }
+
+            precoTetoGraham={
+              precoTetoGraham
+            }
+            margemSegurancaGraham={
+              margemSegurancaGraham
+            }
+          />
 
         <div className="grid grid-cols-12 gap-6">
 
