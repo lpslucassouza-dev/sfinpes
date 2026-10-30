@@ -153,9 +153,7 @@ ValuationDetailsPage({
 
           <Card
             title="Upside"
-            value={`${(valuation.upsideDownside ?? 0).toFixed(
-              2
-            )}%`}
+            value={`${(valuation.upsideDownside ?? 0).toFixed(2)}%`}
           />
 
 
@@ -216,7 +214,7 @@ ValuationDetailsPage({
 
             <Card
               title="Taxa Desconto Perpétua"
-              value={`${valuation.taxaDescontoPerpetua}%`}
+              value={`${valuation.taxaDescontoPerpetua?.toFixed(2) ?? "0.00"}%`}
             />
 
             <Card

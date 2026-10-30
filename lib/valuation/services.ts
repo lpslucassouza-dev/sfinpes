@@ -108,15 +108,10 @@ static calculateValuation({
   totalAcoes,
 }: {
   rows: DcfRow[];
-
   taxaDesconto: number;
-
   crescimentoPerpetuo: number;
-
   taxaDescontoPerpetua: number;
-
   precoAtual: number;
-
   totalAcoes: number;
 }) {
 
@@ -192,19 +187,12 @@ static calculateValuation({
       : 0;
 
   return {
-    
     rows: calculatedRows,
-
     vplTotal,
-
     valorTerminal,
-
     vplPerpetuo,
-
     marketCapProjetado,
-
     precoJusto,
-
     upsideDownside,
   };
   }

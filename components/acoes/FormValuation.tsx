@@ -97,7 +97,17 @@ const [dcfRows, setDcfRows] =
       precoPorAcao,
       precoAtual
     );
+  
+  const [
+    usarAuxiliarUnits,
+    setUsarAuxiliarUnits,
+  ] = useState(false);
 
+  const [
+    auxiliarUnits,
+    setAuxiliarUnits,
+  ] = useState(1);
+  
   function handleReset() {
     setPrecoAtual(0);
     setTotalAcoes(0);
@@ -106,6 +116,9 @@ const [dcfRows, setDcfRows] =
     setDpa(0);
     setDividendYieldDesejado(6);
     setVpa(0);
+    setTaxaDescontoPerpetua(10);
+    setUsarAuxiliarUnits(false);
+    setAuxiliarUnits(1);
     setDcfRows(
       dcfRows.map((row) => ({
         ...row,
@@ -124,30 +137,31 @@ const [dcfRows, setDcfRows] =
       precoAtual,
       totalAcoes,
     });
-  
-{/*    
-    function handleSave() {
-      console.log("Salvar valuation");
 
-      console.log({
-        ticker,
-        precoAtual,
-        precoJusto: valuation.precoJusto,
-        upside: valuation.upsideDownside,
-      });
-    }
-*/}
+  const precoJustoCalculado =
+    valuation.precoJusto;
+
+  const precoJustoFinal =
+    precoJustoCalculado *
+    (
+      usarAuxiliarUnits
+        ? auxiliarUnits
+        : 1
+    );
+  
+  const upsideFinal =
+    precoAtual > 0
+      ? (
+          (
+            precoJustoFinal -
+            precoAtual
+          ) /
+          precoAtual
+        ) * 100
+      : 0;
 
 async function handleSave() {
   try {
-
-    {/* 
-    console.log({
-      ticker,
-      precoAtual,
-      totalAcoes,
-      });
-    */}
 
     const response = await fetch(
       "/api/valuation",
@@ -162,8 +176,8 @@ async function handleSave() {
         body: JSON.stringify({
           ticker,
           precoAtual,
-          precoJusto: valuation.precoJusto,
-          upsideDownside: valuation.upsideDownside,
+          precoJusto: precoJustoFinal,
+          upsideDownside: upsideFinal,
           totalAcoes,
           payout,
           roe,
@@ -276,7 +290,10 @@ async function handleSearchTicker() {
     );
 
     setLpa(
-      stock.earningsPerShare ?? 0
+      Number(
+        (stock.earningsPerShare ?? 0)
+          .toFixed(2)
+      )
     );
 
     console.log(stock);
@@ -429,6 +446,7 @@ const margemSegurancaGraham =
             }
 
             lpa={lpa}
+            setLpa={setLpa}
 
             vpa={vpa}
             setVpa={setVpa}
@@ -460,15 +478,23 @@ const margemSegurancaGraham =
               setTaxaDesconto={setTaxaDesconto}
               crescimentoPerpetuo={crescimentoPerpetuo}
               setCrescimentoPerpetuo={setCrescimentoPerpetuo}
+              taxaDescontoPerpetua={taxaDescontoPerpetua}
+              setTaxaDescontoPerpetua={setTaxaDescontoPerpetua}
             />
 
             <RealidadeProjetadaCard
               marketCap={valuation.marketCapProjetado}
               totalAcoes={totalAcoes}
-              precoPorAcao={valuation.precoJusto}
-              upsideDownside={valuation.upsideDownside}
+              precoPorAcao={precoJustoFinal}
+              upsideDownside={upsideFinal}
               onReset={handleReset}
               onSave={handleSave}
+
+              usarAuxiliarUnits={usarAuxiliarUnits}
+              setUsarAuxiliarUnits={setUsarAuxiliarUnits}
+
+              auxiliarUnits={auxiliarUnits}
+              setAuxiliarUnits={setAuxiliarUnits}
             />
 
           </div>

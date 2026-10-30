@@ -230,6 +230,48 @@ export default function ValuationTable({
 
             <th
               onClick={() =>
+                handleSort("precoTetoBazin")
+              }
+              className="
+                cursor-pointer
+                px-4
+                py-3
+                text-right
+              "
+            >
+              Preço Bazin
+              {sortField ===
+                "precoTetoBazin" &&
+                (
+                  sortDirection === "asc"
+                    ? " ↑"
+                    : " ↓"
+                )}
+            </th>
+
+            <th
+              onClick={() =>
+                handleSort("precoTetoGraham")
+              }
+              className="
+                cursor-pointer
+                px-4
+                py-3
+                text-right
+              "
+            >
+              Preço Graham
+              {sortField ===
+                "precoTetoGraham" &&
+                (
+                  sortDirection === "asc"
+                    ? " ↑"
+                    : " ↓"
+                )}
+            </th>
+
+            <th
+              onClick={() =>
                 handleSort(
                   "upside"
                 )
@@ -330,6 +372,30 @@ export default function ValuationTable({
                         "currency",
                       currency:
                         "BRL",
+                    }
+                  )}
+                </td>
+
+                <td className="px-4 py-3 text-right">
+                  {Number(
+                    valuation.precoTetoBazin ?? 0
+                  ).toLocaleString(
+                    "pt-BR",
+                    {
+                      style: "currency",
+                      currency: "BRL",
+                    }
+                  )}
+                </td>
+
+                <td className="px-4 py-3 text-right">
+                  {Number(
+                    valuation.precoTetoGraham ?? 0
+                  ).toLocaleString(
+                    "pt-BR",
+                    {
+                      style: "currency",
+                      currency: "BRL",
                     }
                   )}
                 </td>

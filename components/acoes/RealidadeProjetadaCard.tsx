@@ -1,10 +1,22 @@
 type Props = {
-  marketCap: number;
-  totalAcoes: number;
-  precoPorAcao: number;
-  upsideDownside: number;
-  onReset: () => void;
-  onSave: () => void;
+    marketCap: number;
+    totalAcoes: number;
+    precoPorAcao: number;
+    upsideDownside: number;
+    onReset: () => void;
+    onSave: () => void;
+    usarAuxiliarUnits: boolean;
+
+    setUsarAuxiliarUnits: (
+    value: boolean
+    ) => void;
+
+    auxiliarUnits: number;
+
+    setAuxiliarUnits: (
+    value: number
+    ) => void;
+
 };
 
 export default function RealidadeProjetadaCard({
@@ -12,6 +24,13 @@ export default function RealidadeProjetadaCard({
   totalAcoes,
   precoPorAcao,
   upsideDownside,
+
+  usarAuxiliarUnits,
+  setUsarAuxiliarUnits,
+
+  auxiliarUnits,
+  setAuxiliarUnits,
+
   onReset,
   onSave,
 }: Props) {
@@ -26,7 +45,7 @@ export default function RealidadeProjetadaCard({
             ? "text-blue-600"
             : "text-red-600";
 
-function Row({
+    function Row({
             label,
             value,
             color = "",
@@ -113,6 +132,51 @@ function Row({
             </div>
 
         </div>
+
+        <div className="border-t pt-4 mt-4">
+
+            <label className="flex items-center gap-2">
+
+                <input
+                type="checkbox"
+                checked={usarAuxiliarUnits}
+                onChange={(e) =>
+                    setUsarAuxiliarUnits(
+                    e.target.checked
+                    )
+                }
+                />
+
+                <span className="text-sm">
+                Utilizar Auxiliar cálculo Units
+                </span>
+
+            </label>
+
+            <div className="mt-3">
+
+                <input
+                type="number"
+                min="1"
+                value={auxiliarUnits}
+                disabled={!usarAuxiliarUnits}
+                onChange={(e) =>
+                    setAuxiliarUnits(
+                    Number(e.target.value)
+                    )
+                }
+                className="
+                    w-24
+                    rounded-md
+                    border
+                    px-3
+                    py-2
+                "
+                />
+
+            </div>
+
+            </div>
 
         <div className="flex gap-3">
 

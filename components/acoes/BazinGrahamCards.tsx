@@ -8,6 +8,7 @@ type Props = {
   ) => void;
 
   lpa: number;
+  setLpa: (value: number) => void;
 
   vpa: number;
   setVpa: (value: number) => void;
@@ -25,6 +26,7 @@ export default function BazinGrahamCards({
   dividendYieldDesejado,
   setDividendYieldDesejado,
   lpa,
+  setLpa,
   vpa,
   setVpa,
   precoTetoBazin,
@@ -161,18 +163,25 @@ export default function BazinGrahamCards({
             <span>LPA</span>
 
             <input
-              readOnly
-              value={lpa.toFixed(2)}
-              className="
-                w-24
-                border
-                rounded
-                px-5
-                py-1
-                text-right
-                bg-slate-100
-              "
-            />
+                type="number"
+                step="0.01"
+                value={lpa}
+                onChange={(e) =>
+                  setLpa(
+                    Number(
+                      e.target.value.replace(",", ".")
+                    )
+                  )
+                }
+                className="
+                  w-24
+                  border
+                  rounded
+                  px-2
+                  py-1
+                  text-right
+                "
+              />
           </div>
 
           <div className="flex justify-between items-center">

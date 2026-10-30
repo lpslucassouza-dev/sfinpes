@@ -23,6 +23,12 @@ type Props = {
   setCrescimentoPerpetuo: (
     value: number
   ) => void;
+
+  taxaDescontoPerpetua: number;
+
+  setTaxaDescontoPerpetua: (
+    value: number
+  ) => void;
 };
 
 export default function PremissasCard({
@@ -35,6 +41,8 @@ export default function PremissasCard({
   setTaxaDesconto,
   crescimentoPerpetuo,
   setCrescimentoPerpetuo,
+  taxaDescontoPerpetua,
+  setTaxaDescontoPerpetua,
 }: Props) {
   return (
     <div className="
@@ -158,6 +166,47 @@ export default function PremissasCard({
           <span className="text-slate-400">%</span>
         </div>
       </div>
+
+    <div className="flex items-center justify-between px-4 py-2">
+
+      <span className="text-sm text-slate-700">
+        Desconto Perpétuo
+      </span>
+
+      <div className="flex items-center gap-2">
+
+        <input
+          type="number"
+          step="0.01"
+          value={taxaDescontoPerpetua}
+          onChange={(e) =>
+            setTaxaDescontoPerpetua(
+              Number(
+                e.target.value.replace(",", ".")
+              )
+            )
+          }
+          className="
+            h-8
+            w-20
+            rounded-md
+            border-0
+            bg-slate-100
+            text-center
+            text-sm
+            font-medium
+          "
+        />
+
+        <span className="text-slate-400">
+          %
+        </span>
+
+      </div>
+
+    </div>
+
+
     </div>
   
 

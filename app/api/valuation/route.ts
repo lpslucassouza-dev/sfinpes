@@ -27,6 +27,14 @@ export async function POST(
           taxaDescontoPerpetua: body.taxaDescontoPerpetua,
           crescimentoPerpetuo: body.crescimentoPerpetuo,
           marketCapProjetado: body.marketCapProjetado,
+          dpa: body.dpa,
+          dividendYieldDesejado: body.dividendYieldDesejado,
+          precoTetoBazin: body.precoTetoBazin,
+          margemSegurancaBazin: body.margemSegurancaBazin,
+          lpa: body.lpa,
+          vpa: body.vpa,
+          precoTetoGraham: body.precoTetoGraham,
+          margemSegurancaGraham: body.margemSegurancaGraham,
         },
       });
 
